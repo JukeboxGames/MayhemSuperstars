@@ -10,6 +10,7 @@ public abstract class PlayerController : MonoBehaviour
 
     #region Variables - This GameObject References
     private Rigidbody2D rig;
+    [HideInInspector] public PlayerInput playerInput;
     #endregion
 
     #region Variables - Object References
@@ -50,7 +51,22 @@ public abstract class PlayerController : MonoBehaviour
     public float timeSinceLastAbility;
     #endregion
 
-    #region Functions - Unity Events 
+    #region Functions - Unity Events
+    void OnEnable() {
+        playerInput = GetComponent<PlayerInput>();
+        playerInput.actions["Movement"].performed += OnMove;
+        playerInput.actions["Shoot"].performed += OnShoot;
+        playerInput.actions["Shoot Direction"].performed += OnShootDirection;
+        playerInput.actions["Special"].performed += OnSpecial;
+    }
+
+    private void OnDisable() {
+        playerInput.actions["Movement"].performed -= OnMove;
+        playerInput.actions["Shoot"].performed -= OnShoot;
+        playerInput.actions["Shoot Direction"].performed -= OnShootDirection;
+        playerInput.actions["Special"].performed -= OnSpecial;
+    }
+
     void Start () {
         rig = gameObject.GetComponent<Rigidbody2D>();
         Respawn();
@@ -64,7 +80,7 @@ public abstract class PlayerController : MonoBehaviour
         if (input_Shoot)
         {
             Vector2 direction;
-            if (GetComponent<PlayerInput>().devices[0].ToString() == "Keyboard:/Keyboard" || GetComponent<PlayerInput>().devices[0].ToString() == "Mouse:/Mouse") {
+            if (playerInput.devices[0].ToString() == "Keyboard:/Keyboard" || playerInput.devices[0].ToString() == "Mouse:/Mouse") {
                 Vector3 worldMousePos = Camera.main.ScreenToWorldPoint(input_ShootDirection);
                 direction = worldMousePos - transform.position;
             } else {
@@ -144,6 +160,7 @@ public abstract class PlayerController : MonoBehaviour
     #region Functions - Player Response to Game State
     public virtual void Respawn () {
         ResetStats();
+        timeSinceLastAbility = Time.time - currentAbilityCooldown;
         isDead = false;
         enableControl = true;
     }

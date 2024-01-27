@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1001246297069921038}
   - component: {fileID: 4830406342336365586}
   - component: {fileID: 7513007463241814293}
-  m_Layer: 0
+  m_Layer: 18
   m_Name: DebugPlayerBullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}

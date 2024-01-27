@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2741377195244427821}
   - component: {fileID: 2883642394377072564}
   - component: {fileID: 8420689053826032045}
-  m_Layer: 0
+  m_Layer: 18
   m_Name: DebugCheeseBullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
