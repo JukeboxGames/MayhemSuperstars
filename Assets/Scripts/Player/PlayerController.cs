@@ -9,7 +9,7 @@ public abstract class PlayerController : MonoBehaviour
 {
 
     #region Variables - This GameObject References
-    private Rigidbody2D rig;
+    [HideInInspector] public Rigidbody2D rig;
     [HideInInspector] public PlayerInput playerInput;
     #endregion
 
@@ -19,8 +19,7 @@ public abstract class PlayerController : MonoBehaviour
 
     #region Variables - Input Variables
     private bool input_Shoot, input_Special;
-    private Vector2 input_Movement;
-    [HideInInspector] public Vector2 input_ShootDirection;
+    [HideInInspector] public Vector2 input_ShootDirection, input_Movement;
     #endregion
 
     #region Variables - Character Stats
@@ -38,6 +37,8 @@ public abstract class PlayerController : MonoBehaviour
     public int currentFireRate;
     public int currentDamage;
     public float currentAbilityCooldown;
+    public float currentInvulnerabilityWindow;
+    public float defaultInvulnerabilityWindow = 1.5f;
     #endregion
 
     #region Variables - Player State
@@ -58,6 +59,8 @@ public abstract class PlayerController : MonoBehaviour
         playerInput.actions["Shoot"].performed += OnShoot;
         playerInput.actions["Shoot Direction"].performed += OnShootDirection;
         playerInput.actions["Special"].performed += OnSpecial;
+        playerInput.actions["Shoot"].canceled += OnShoot;
+        playerInput.actions["Special"].canceled += OnSpecial;
     }
 
     private void OnDisable() {
@@ -65,6 +68,8 @@ public abstract class PlayerController : MonoBehaviour
         playerInput.actions["Shoot"].performed -= OnShoot;
         playerInput.actions["Shoot Direction"].performed -= OnShootDirection;
         playerInput.actions["Special"].performed -= OnSpecial;
+        playerInput.actions["Shoot"].canceled -= OnShoot;
+        playerInput.actions["Special"].canceled -= OnSpecial;
     }
 
     void Start () {
@@ -72,7 +77,7 @@ public abstract class PlayerController : MonoBehaviour
         Respawn();
     }
 
-    void Update () {
+    public virtual void Update () {
         if (!enableControl) {
             return;
         }
@@ -96,7 +101,7 @@ public abstract class PlayerController : MonoBehaviour
         }
     }
 
-    void FixedUpdate () {
+    public virtual void FixedUpdate () {
         if (enableControl) {
             Move();
         }   
@@ -126,6 +131,22 @@ public abstract class PlayerController : MonoBehaviour
     #endregion
 
     #region Functions - Player Health
+
+    public virtual void GetHit () {
+        
+        if (isInvulnerable) {
+            return;
+        }
+
+        currentHealth -= 1;
+
+        if (currentHealth <= 0) {
+            Die();
+        } else {
+            RecordInvulnerability(currentInvulnerabilityWindow);
+        }
+    }
+
     public virtual void GetHit (int damage) {
         if (isInvulnerable) {
             return;
@@ -136,7 +157,7 @@ public abstract class PlayerController : MonoBehaviour
         if (currentHealth <= 0) {
             Die();
         } else {
-            RecordInvulnerability(1.5f);
+            RecordInvulnerability(currentInvulnerabilityWindow);
         }
     }
 
@@ -172,6 +193,7 @@ public abstract class PlayerController : MonoBehaviour
         currentFireRate = characterFireRate;
         currentMaxHealth = characterMaxHealth;
         currentHealth = currentMaxHealth;
+        currentInvulnerabilityWindow = defaultInvulnerabilityWindow;
     }
 
     public virtual void Despawn () {

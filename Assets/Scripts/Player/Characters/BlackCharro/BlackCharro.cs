@@ -1,46 +1,46 @@
-using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
-public class Sarge : PlayerController
+public class BlackCharro : PlayerController
 {
-    public override int characterSpeed { get{return 1;} }
-    public override int characterMaxHealth { get{return 10;} }
+    public override int characterSpeed { get{return 4;} }
+    public override int characterMaxHealth { get{return 4;} }
     public override int characterFireRate { get{return 2;} }
     public override int characterDamage { get{return 4;} }
-    public override float characterAbilityCooldown { get{return 5f;} }
+    public override float characterAbilityCooldown { get{return 2f;} }
 
-    [SerializeField] private GameObject shield;
-    [SerializeField] private float shieldDistanceFromPlayer;
-    [SerializeField] private float shieldDuration;
+    [SerializeField] private GameObject slash;
+    [SerializeField] private float slashDistanceFromPlayer;
+    [SerializeField] private float slashDuration;
 
     public override void CastSpecialAbility() {
         if ((Time.time - timeSinceLastAbility) > (currentAbilityCooldown)) {
-            Vector2 direction = GetShieldDirection();
+            Vector2 direction = GetSlashDirection();
             if (direction == Vector2.zero) return;
 
-            // Instantiate and position shield
-            GameObject instance = Instantiate(shield,transform);
+            // Instantiate and position slash
+            GameObject instance = Instantiate(slash,transform);
             instance.transform.localPosition = direction;
+            instance.GetComponent<BlackCharro_Slash>().damage = currentDamage;
 
-            // Rotate shield to desired angle
+            // Rotate slash to desired angle
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg -90;
             instance.transform.eulerAngles = Vector3.forward * angle;
 
-            StartCoroutine(RecordShieldTime(instance));
+            StartCoroutine(RecordSlashTime(instance));
 
             // Actualizar tiempo de cooldown
             timeSinceLastAbility = Time.time;
         }
     }
 
-    IEnumerator RecordShieldTime (GameObject instance) {
-        currentSpeed--;
-        yield return new WaitForSeconds(shieldDuration);
-        currentSpeed++;
+    IEnumerator RecordSlashTime (GameObject instance) {
+        yield return new WaitForSeconds(slashDuration);
         Destroy(instance);
     }
 
-    Vector2 GetShieldDirection () {
+    Vector2 GetSlashDirection () {
         // Get Direction
         Vector2 direction;
         if (playerInput.devices[0].ToString() == "Keyboard:/Keyboard" || playerInput.devices[0].ToString() == "Mouse:/Mouse") {
@@ -50,7 +50,7 @@ public class Sarge : PlayerController
             direction = input_ShootDirection;
         }
         direction.Normalize();
-        direction = direction * shieldDistanceFromPlayer;
+        direction = direction * slashDistanceFromPlayer;
         return direction;
     }
 }
