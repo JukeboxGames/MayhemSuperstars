@@ -8,7 +8,6 @@ public class Zombie : Enemy
     {
         while (true) {
             gameObject.transform.position = gameObject.transform.position - gameObject.transform.right * _moveSpeed;
-            Debug.Log("Moved");
             yield return new WaitForSeconds(1.0f);
         }
     }
@@ -20,9 +19,8 @@ public class Zombie : Enemy
     {
         Debug.Log("Hello");
     }
-    protected override void Start()
+    void Start()
     {
-        base.Start();
-        setStats("alien");
+        Initialize("zombie");
     }
 }
