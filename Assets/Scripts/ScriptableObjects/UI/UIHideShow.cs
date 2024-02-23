@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName ="SO_UIHideShow")]
+[CreateAssetMenu(menuName ="ScriptableObjects/Network/UIHideShow")]
 public class UIHideShow : ScriptableObject
 {
     public void HideUIElement(GameObject obj){
