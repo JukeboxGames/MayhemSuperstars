@@ -5,7 +5,7 @@ using System.Collections;
 using Unity.Collections;
 using UnityEngine.InputSystem;
 
-public abstract class PlayerController : MonoBehaviour
+public abstract class PlayerController : NetworkBehaviour
 {
 
     #region Variables - This GameObject References
@@ -53,8 +53,9 @@ public abstract class PlayerController : MonoBehaviour
     #endregion
 
     #region Functions - Unity Events
-    void OnEnable() {
-        playerInput = GetComponent<PlayerInput>();
+
+    public void InitializeInput(PlayerInput soulPlayerInput) {
+        playerInput = soulPlayerInput;
         playerInput.actions["Movement"].performed += OnMove;
         playerInput.actions["Shoot"].performed += OnShoot;
         playerInput.actions["Shoot Direction"].performed += OnShootDirection;
@@ -63,13 +64,16 @@ public abstract class PlayerController : MonoBehaviour
         playerInput.actions["Special"].canceled += OnSpecial;
     }
 
-    private void OnDisable() {
-        playerInput.actions["Movement"].performed -= OnMove;
-        playerInput.actions["Shoot"].performed -= OnShoot;
-        playerInput.actions["Shoot Direction"].performed -= OnShootDirection;
-        playerInput.actions["Special"].performed -= OnSpecial;
-        playerInput.actions["Shoot"].canceled -= OnShoot;
-        playerInput.actions["Special"].canceled -= OnSpecial;
+    public override void OnDestroy() {
+        if (playerInput != null) {
+            playerInput.actions["Movement"].performed -= OnMove;
+            playerInput.actions["Shoot"].performed -= OnShoot;
+            playerInput.actions["Shoot Direction"].performed -= OnShootDirection;
+            playerInput.actions["Special"].performed -= OnSpecial;
+            playerInput.actions["Shoot"].canceled -= OnShoot;
+            playerInput.actions["Special"].canceled -= OnSpecial;
+        }
+        base.OnDestroy();
     }
 
     void Start () {
@@ -88,7 +92,9 @@ public abstract class PlayerController : MonoBehaviour
             if (playerInput.devices[0].ToString() == "Keyboard:/Keyboard" || playerInput.devices[0].ToString() == "Mouse:/Mouse") {
                 Vector3 worldMousePos = Camera.main.ScreenToWorldPoint(input_ShootDirection);
                 direction = worldMousePos - transform.position;
+                
             } else {
+                
                 direction = input_ShootDirection;
             }
             

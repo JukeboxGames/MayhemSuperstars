@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class PlayerBullet : MonoBehaviour
 {
-    [HideInInspector] public int bulletDamage;
+    protected int bulletDamage;
     public abstract float playerBulletSpeed { get; }
 
     public virtual void StartBullet (int damage, Vector2 direction) {
