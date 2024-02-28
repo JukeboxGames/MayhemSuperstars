@@ -56,5 +56,6 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "MayhemSuperstarsRelease.sln"
+    "dotnet.defaultSolution": "MayhemSuperstarsRelease.sln",
+    "dotnet.preferCSharpExtension": true
 }

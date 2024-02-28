@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 3219671392780467839}
   - component: {fileID: 1709070945544292085}
-  - component: {fileID: 6825302723223174762}
   - component: {fileID: 4599090365694616825}
+  - component: {fileID: 6132842796990355761}
   m_Layer: 0
   m_Name: Player Soul
   m_TagString: Untagged
@@ -48,8 +48,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterSO: {fileID: 11400000, guid: 26d51eba48c17a24caaec72765cbf2c2, type: 2}
   mapsSO: {fileID: 11400000, guid: c8006d7dbc47dda4081f705a6ac79e17, type: 2}
-  si: {fileID: 5336674776708586500, guid: 92224fedfa2941d458738f0ba31557cf, type: 3}
---- !u!114 &6825302723223174762
+  debugPlayer: {fileID: 6231492056552428496}
+--- !u!114 &4599090365694616825
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6231492056552428496}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 951099334
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+--- !u!114 &6132842796990355761
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -77,31 +97,31 @@ MonoBehaviour:
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: dd100dc8-d988-439e-8d50-9f44365d3839
-    m_ActionName: Player/Movement[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d,/XInputControllerWindows/leftStick]
+    m_ActionName: Player/Movement[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d]
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: e2916314-9c6c-4c8d-8307-bdab252fb34f
-    m_ActionName: Player/Special[/Mouse/rightButton,/XInputControllerWindows/leftTrigger,/XInputControllerWindows/rightTrigger]
+    m_ActionName: Player/Special[/Mouse/rightButton]
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: 18d0a7c7-c206-4d0d-8644-20ea4315f049
-    m_ActionName: Player/Shoot[/Mouse/leftButton,/XInputControllerWindows/rightStick/down,/XInputControllerWindows/rightStick/left,/XInputControllerWindows/rightStick/right,/XInputControllerWindows/rightStick/up]
+    m_ActionName: Player/Shoot[/Mouse/leftButton]
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: 445f00dc-45ce-491f-b2c4-5cd5ce1d2717
-    m_ActionName: Player/Shoot Direction[/Mouse/position,/XInputControllerWindows/rightStick]
+    m_ActionName: Player/Shoot Direction[/Mouse/position]
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: 2b9b3231-bfc6-42a5-8eaa-7714f196588d
-    m_ActionName: UI/Navigate[/XInputControllerWindows/leftStick/up,/XInputControllerWindows/rightStick/up,/XInputControllerWindows/leftStick/down,/XInputControllerWindows/rightStick/down,/XInputControllerWindows/leftStick/left,/XInputControllerWindows/rightStick/left,/XInputControllerWindows/leftStick/right,/XInputControllerWindows/rightStick/right,/XInputControllerWindows/dpad,/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]
+    m_ActionName: UI/Navigate[/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: 7c973080-0b0d-4d07-8bed-4080e93cdc1a
-    m_ActionName: UI/Submit[/Keyboard/enter,/XInputControllerWindows/buttonSouth]
+    m_ActionName: UI/Submit[/Keyboard/enter]
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: 08bd1585-6b33-461a-987d-44833b9a7b78
-    m_ActionName: UI/Cancel[/Keyboard/escape,/XInputControllerWindows/buttonEast]
+    m_ActionName: UI/Cancel[/Keyboard/escape]
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: 0dc35470-5985-4394-9ffb-d6a4772dd22f
@@ -109,7 +129,7 @@ MonoBehaviour:
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: 1c49ddb9-beb2-4061-8377-960acc0e6200
-    m_ActionName: UI/Click[/Mouse/leftButton,/XInputControllerWindows/buttonSouth]
+    m_ActionName: UI/Click[/Mouse/leftButton]
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: 13ab9436-d80d-477e-aee4-32d1652ce769
@@ -130,28 +150,8 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 4cf754b3-270c-436c-9d1f-7cb5fe9e3878
     m_ActionName: UI/TrackedDeviceOrientation
-  m_NeverAutoSwitchControlSchemes: 0
+  m_NeverAutoSwitchControlSchemes: 1
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!114 &4599090365694616825
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6231492056552428496}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 951099334
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 1
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1

@@ -82,19 +82,18 @@ public abstract class PlayerController : NetworkBehaviour
     }
 
     public virtual void Update () {
-        if (!enableControl) {
+        if (!enableControl || !IsOwner) {
             return;
         }
 
         if (input_Shoot)
         {
             Vector2 direction;
-            if (playerInput.devices[0].ToString() == "Keyboard:/Keyboard" || playerInput.devices[0].ToString() == "Mouse:/Mouse") {
+            // TODO: Check when null
+            if (playerInput.currentControlScheme == "Keyboard") {
                 Vector3 worldMousePos = Camera.main.ScreenToWorldPoint(input_ShootDirection);
                 direction = worldMousePos - transform.position;
-                
             } else {
-                
                 direction = input_ShootDirection;
             }
             
@@ -108,7 +107,7 @@ public abstract class PlayerController : NetworkBehaviour
     }
 
     public virtual void FixedUpdate () {
-        if (enableControl) {
+        if (enableControl && IsOwner) {
             Move();
         }   
     }

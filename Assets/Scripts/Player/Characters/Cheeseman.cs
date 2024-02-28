@@ -14,7 +14,7 @@ public class Cheeseman : PlayerController
     public override void CastSpecialAbility() {
         if ((Time.time - timeSinceLastAbility) > (currentAbilityCooldown)) {
             Vector2 direction;
-            if (playerInput.devices[0].ToString() == "Keyboard:/Keyboard" || playerInput.devices[0].ToString() == "Mouse:/Mouse") {
+            if (playerInput.currentControlScheme == "Keyboard") {
                 Vector3 worldMousePos = Camera.main.ScreenToWorldPoint(input_ShootDirection);
                 direction = worldMousePos - transform.position;
             } else {
