@@ -10,14 +10,14 @@ GameObject:
   m_Component:
   - component: {fileID: 70615988620939206}
   - component: {fileID: 4742981798745824520}
+  - component: {fileID: 6757845351885114378}
   - component: {fileID: 2615082371488135248}
   - component: {fileID: 4806881686583510117}
-  - component: {fileID: 6536103709847196024}
-  - component: {fileID: 3536115488529140156}
-  - component: {fileID: 2827309459645639507}
-  - component: {fileID: -3329111493009197966}
+  - component: {fileID: 2480432606072909432}
+  - component: {fileID: 2993755211294919478}
+  - component: {fileID: -8382075109756918205}
   m_Layer: 20
-  m_Name: DebugEvilGoat
+  m_Name: DebugCheeseman
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -80,7 +80,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 1
   m_Sprite: {fileID: -9095717837082945937, guid: 207ee8102dd4143d288186ef0be518ee, type: 3}
-  m_Color: {r: 0.4245283, g: 0.26780456, b: 0, a: 1}
+  m_Color: {r: 1, g: 0.88914996, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -90,6 +90,37 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &6757845351885114378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4250775416813591352}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6398e19426703694192cd5a402fbd3c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rig: {fileID: 0}
+  playerInput: {fileID: 0}
+  playerBullet: {fileID: 609364855216714387, guid: 966170eb4dee0f9418c8c8bdf0bec878, type: 3}
+  pushHitbox: {fileID: 5808247941602645054, guid: 7c38a01342d6dd249a154b0d1902dbd4, type: 3}
+  playerSoul: {fileID: 0}
+  so_GameState: {fileID: 11400000, guid: 356171b94737aa448a8b7b7dce63d9e8, type: 2}
+  interactables: []
+  currentSpeed: 0
+  currentMaxHealth: 0
+  currentHealth: 0
+  currentFireRate: 0
+  currentDamage: 0
+  currentAbilityCooldown: 0
+  currentInvulnerabilityWindow: 0
+  defaultInvulnerabilityWindow: 1.5
+  defaultPushCooldown: 0.5
+  currentPushCooldown: 0.5
+  isDead: 0
+  cheeseBulletPrefab: {fileID: 4231932933504570270, guid: 278eb0b741ee68442b7bb9aa13733e22, type: 3}
 --- !u!70 &2615082371488135248
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -152,61 +183,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!114 &6536103709847196024
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4250775416813591352}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5129e1f0f09421a43b8432df410452da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rig: {fileID: 0}
-  playerInput: {fileID: 0}
-  playerBullet: {fileID: 609364855216714387, guid: 966170eb4dee0f9418c8c8bdf0bec878, type: 3}
-  input_ShootDirection: {x: 0, y: 0}
-  input_Movement: {x: 0, y: 0}
-  currentSpeed: 0
-  currentMaxHealth: 0
-  currentHealth: 0
-  currentFireRate: 0
-  currentDamage: 0
-  currentAbilityCooldown: 0
-  currentInvulnerabilityWindow: 0
-  defaultInvulnerabilityWindow: 1.5
-  isInvulnerable: 0
-  isDead: 0
-  enableControl: 0
-  timeSinceLastFire: 0
-  timeSinceLastAbility: 0
-  bonfire: {fileID: 7285512725898267968, guid: 35eb9afabf0baf94fbdab953b5c6e4f5, type: 3}
-  numberOfBonfires: 6
-  distanceFromPlayer: 4
-  bonfireStartTime: 1
---- !u!114 &3536115488529140156
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4250775416813591352}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 951099334
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 1
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
---- !u!114 &2827309459645639507
+--- !u!114 &2480432606072909432
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -236,7 +213,7 @@ MonoBehaviour:
   InLocalSpace: 0
   Interpolate: 1
   SlerpPosition: 0
---- !u!114 &-3329111493009197966
+--- !u!114 &2993755211294919478
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -248,3 +225,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80d7c879794dfda4687da0e400131852, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-8382075109756918205
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4250775416813591352}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 951099334
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1

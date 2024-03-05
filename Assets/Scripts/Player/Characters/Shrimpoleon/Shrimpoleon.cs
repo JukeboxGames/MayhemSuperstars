@@ -20,15 +20,15 @@ public class Shrimpoleon : PlayerController
                 direction = worldMousePos - transform.position;
             } else {
                 direction = input_ShootDirection;
-                if (direction == Vector2.zero) {
-                    return;
-                }
             }
+
+            if (direction == Vector2.zero) return;
 
             // Encontrar dirección de disparo
             direction.Normalize();
 
             GameObject instance = Instantiate(balloon, transform.position, transform.rotation);
+            Physics2D.IgnoreCollision(instance.GetComponent<Collider2D>(), GetComponent<Collider2D>());
             instance.GetComponent<PlayerBullet>().StartBullet(0, direction);
 
             // Actualizar tiempo de cooldown

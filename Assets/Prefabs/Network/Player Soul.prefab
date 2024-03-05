@@ -48,7 +48,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterSO: {fileID: 11400000, guid: 26d51eba48c17a24caaec72765cbf2c2, type: 2}
   mapsSO: {fileID: 11400000, guid: c8006d7dbc47dda4081f705a6ac79e17, type: 2}
-  debugPlayer: {fileID: 6231492056552428496}
+  characterIndex: 0
 --- !u!114 &4599090365694616825
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -150,6 +150,14 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 4cf754b3-270c-436c-9d1f-7cb5fe9e3878
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: eedd6e11-4458-47dd-a4ef-533d7f0afe15
+    m_ActionName: Player/Interact[/Keyboard/e]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 50685560-770f-4cbe-aeab-750de7a7d976
+    m_ActionName: Player/Push[/Keyboard/q]
   m_NeverAutoSwitchControlSchemes: 1
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

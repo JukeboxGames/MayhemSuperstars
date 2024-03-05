@@ -19,10 +19,9 @@ public class Cheeseman : PlayerController
                 direction = worldMousePos - transform.position;
             } else {
                 direction = input_ShootDirection;
-                if (direction == Vector2.zero) {
-                    return;
-                }
             }
+
+            if (direction == Vector2.zero) return;
 
             // Encontrar dirección de disparo
             direction.Normalize();

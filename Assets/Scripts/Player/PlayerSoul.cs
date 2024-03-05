@@ -8,11 +8,12 @@ using System.Collections;
 
 public class PlayerSoul : NetworkBehaviour
 {
-    private GameObject vessel;
+    [HideInInspector] public GameObject vessel;
     [SerializeField] private SO_Characters characterSO;
     [SerializeField] private SO_Maps mapsSO;
-    private int debugCharacterIndex = 0;
     Vector2 currentPosition;
+    [HideInInspector] public int characterIndex = 0;
+    private bool joined = false;
     
     private void OnEnable () {
         SceneManager.sceneLoaded += OnSceneLoaded;
@@ -20,13 +21,23 @@ public class PlayerSoul : NetworkBehaviour
 
     public override void OnNetworkSpawn() {
         base.OnNetworkSpawn();
-        if (!IsOwner) {
+        if (IsOwner) {
+            StartCoroutine(WaitToJoin());
+            StartCoroutine(WaitToChangeCharacter(0));   
+        } else {
             Destroy(gameObject.GetComponent<PlayerInput>());
         }
-        StartCoroutine(WaitToChangeCharacter(0));
     }
 
-
+    IEnumerator WaitToJoin () {
+        while (!joined) {
+            yield return new WaitForSeconds(0.1f);
+            if (GameObject.FindGameObjectWithTag("GameManager") != null ) {
+                joined = true;
+                JoinPlayerServerRpc(gameObject);
+            }
+        }
+    }
 
     private void OnDisable() {
         SceneManager.sceneLoaded -= OnSceneLoaded;
@@ -37,6 +48,10 @@ public class PlayerSoul : NetworkBehaviour
     {
         // TODO: Add MAP LIST to call for CHANGE CHARACTER on scene loaded
         if (Array.Exists(mapsSO.mapNames, element => element == scene.name)) {
+            StartCoroutine(WaitToChangeCharacter(0));
+        }
+
+        if (scene.name == "Lobby") {
             StartCoroutine(WaitToChangeCharacter(0));
         }
     }
@@ -50,42 +65,43 @@ public class PlayerSoul : NetworkBehaviour
         if (IsOwner) {
             if (vessel != null) {
                 currentPosition = vessel.transform.position;
-                SpawnVesselServerRpc(GetComponent<NetworkObject>().OwnerClientId, index, vessel, currentPosition.x, currentPosition.y);
+                SpawnVesselServerRpc(gameObject, GetComponent<NetworkObject>().OwnerClientId, index, vessel, currentPosition.x, currentPosition.y);
             } else {
                 currentPosition = Vector2.zero;
-                SpawnVesselServerRpc(GetComponent<NetworkObject>().OwnerClientId, index, currentPosition.x, currentPosition.y);
+                SpawnVesselServerRpc(gameObject, GetComponent<NetworkObject>().OwnerClientId, index, currentPosition.x, currentPosition.y);
             }
         }
     }
 
-    private void Update() {
-    if (!IsOwner) {
-            return;
-        }
-        if (Input.GetKeyDown("e")) {
-            if (debugCharacterIndex == 5) {
-                debugCharacterIndex = 0;
-            } else {
-                debugCharacterIndex++;
-            }
-            StartCoroutine(WaitToChangeCharacter(debugCharacterIndex));
-        }
+    [ServerRpc(RequireOwnership = false)]
+    void JoinPlayerServerRpc (NetworkObjectReference soul) {
+        GameManager gm = GameObject.FindGameObjectWithTag("GameManager")?.GetComponent<GameManager>();
+        gm?.JoinPlayer(soul);
     }
 
     [ServerRpc(RequireOwnership = false)]
-    void SpawnVesselServerRpc (ulong clientId, int index, float x, float y) {
+    void SpawnVesselServerRpc (NetworkObjectReference soul, ulong clientId, int index, float x, float y) {
         GameObject clientVessel = Instantiate(characterSO.characterPrefabs[index], currentPosition, Quaternion.identity);
         clientVessel.GetComponent<NetworkObject>().SpawnWithOwnership(clientId);
         clientVessel.transform.position = new Vector2(x,y);
         GetControlClientRpc(clientVessel, clientId);
+        if (soul.TryGet(out NetworkObject soulGo))
+        {
+            soulGo.gameObject.GetComponent<PlayerSoul>().vessel = clientVessel;
+        }
     }
 
     [ServerRpc(RequireOwnership = false)]
-    void SpawnVesselServerRpc (ulong clientId, int index, NetworkObjectReference vess, float x, float y) {
+    void SpawnVesselServerRpc (NetworkObjectReference soul, ulong clientId, int index, NetworkObjectReference vess, float x, float y) {
         GameObject clientVessel = Instantiate(characterSO.characterPrefabs[index], currentPosition, Quaternion.identity);
         clientVessel.GetComponent<NetworkObject>().SpawnWithOwnership(clientId);
         clientVessel.transform.position = new Vector2(x,y);
         GetControlClientRpc(clientVessel, clientId);
+        if (soul.TryGet(out NetworkObject soulGo))
+        {
+            soulGo.gameObject.GetComponent<PlayerSoul>().vessel = clientVessel;
+        }
+
         if (vess.TryGet(out NetworkObject obj))
         {
             obj.Despawn();
@@ -105,5 +121,5 @@ public class PlayerSoul : NetworkBehaviour
             vessel.transform.position = currentPosition;
             obj.gameObject.GetComponent<PlayerController>().InitializeInput(GetComponent<PlayerInput>());
         }
-    }  
+    }
 }

@@ -4,8 +4,10 @@ using System;
 using System.Collections;
 using Unity.Collections;
 using UnityEngine.InputSystem;
+using Unity.VisualScripting;
+using System.Collections.Generic;
 
-public abstract class PlayerController : NetworkBehaviour
+public abstract class PlayerController : NetworkBehaviour, IReactToGameState
 {
 
     #region Variables - This GameObject References
@@ -15,11 +17,16 @@ public abstract class PlayerController : NetworkBehaviour
 
     #region Variables - Object References
     [SerializeField] private GameObject playerBullet;
+    [SerializeField] private GameObject pushHitbox;
+    [HideInInspector] public PlayerSoul playerSoul;
+    [SerializeField] private SO_GameState so_GameState;
+    public List<GameObject> interactables = new List<GameObject>();
     #endregion
 
     #region Variables - Input Variables
-    private bool input_Shoot, input_Special;
-    [HideInInspector] public Vector2 input_ShootDirection, input_Movement;
+    private bool input_Shoot, input_Push;
+    protected bool input_Special;
+    protected Vector2 input_ShootDirection, input_Movement;
     #endregion
 
     #region Variables - Character Stats
@@ -31,65 +38,64 @@ public abstract class PlayerController : NetworkBehaviour
     #endregion
 
     #region Variables - Current Player Stats
-    public int currentSpeed;
-    public int currentMaxHealth;
-    public int currentHealth;
-    public int currentFireRate;
-    public int currentDamage;
-    public float currentAbilityCooldown;
-    public float currentInvulnerabilityWindow;
-    public float defaultInvulnerabilityWindow = 1.5f;
+    [HideInInspector] public int currentSpeed;
+    [HideInInspector] public int currentMaxHealth;
+    [HideInInspector] public int currentHealth;
+    [HideInInspector] public int currentFireRate;
+    [HideInInspector] public int currentDamage;
+    [HideInInspector] public float currentAbilityCooldown;
+    [HideInInspector] public float currentInvulnerabilityWindow;
+    [HideInInspector] public float defaultInvulnerabilityWindow = 1.5f;
+    [HideInInspector] public float defaultPushCooldown = 0.5f;
+    [HideInInspector] public float currentPushCooldown = 0.5f;
     #endregion
 
     #region Variables - Player State
-    public bool isInvulnerable;
-    public bool isDead;
-    public bool enableControl;
+    protected bool isInvulnerable;
+    [HideInInspector] public bool isDead;
+    protected bool enableControl;
+    protected List<Vector2> appliedForces = new List<Vector2>();
     #endregion
 
     #region Variables - Time
-    public float timeSinceLastFire;
-    public float timeSinceLastAbility;
+    protected float timeSinceLastFire;
+    protected float timeSinceLastAbility;
+    protected float timeSinceLastPush;
     #endregion
 
     #region Functions - Unity Events
-
-    public void InitializeInput(PlayerInput soulPlayerInput) {
-        playerInput = soulPlayerInput;
-        playerInput.actions["Movement"].performed += OnMove;
-        playerInput.actions["Shoot"].performed += OnShoot;
-        playerInput.actions["Shoot Direction"].performed += OnShootDirection;
-        playerInput.actions["Special"].performed += OnSpecial;
-        playerInput.actions["Shoot"].canceled += OnShoot;
-        playerInput.actions["Special"].canceled += OnSpecial;
-    }
 
     public override void OnDestroy() {
         if (playerInput != null) {
             playerInput.actions["Movement"].performed -= OnMove;
             playerInput.actions["Shoot"].performed -= OnShoot;
+            playerInput.actions["Shoot"].canceled -= OnShoot;
             playerInput.actions["Shoot Direction"].performed -= OnShootDirection;
             playerInput.actions["Special"].performed -= OnSpecial;
-            playerInput.actions["Shoot"].canceled -= OnShoot;
             playerInput.actions["Special"].canceled -= OnSpecial;
+            playerInput.actions["Interact"].canceled -= OnInteract;
+            playerInput.actions["Push"].performed -= OnPush;
+            playerInput.actions["Push"].canceled -= OnPush;
         }
         base.OnDestroy();
     }
 
     void Start () {
         rig = gameObject.GetComponent<Rigidbody2D>();
+        so_GameState.gameState.AddListener(ReactToGameState);
         Respawn();
     }
 
-    public virtual void Update () {
+    public virtual void FixedUpdate () {
         if (!enableControl || !IsOwner) {
             return;
         }
 
+        Move();
+
         if (input_Shoot)
         {
             Vector2 direction;
-            // TODO: Check when null
             if (playerInput.currentControlScheme == "Keyboard") {
                 Vector3 worldMousePos = Camera.main.ScreenToWorldPoint(input_ShootDirection);
                 direction = worldMousePos - transform.position;
@@ -104,31 +110,67 @@ public abstract class PlayerController : NetworkBehaviour
         {
             CastSpecialAbility();
         }
+
+        if(input_Push)
+        {
+            Push();
+        }
     }
 
-    public virtual void FixedUpdate () {
-        if (enableControl && IsOwner) {
-            Move();
-        }   
+    public void ReactToGameState(GameManager.GameState gameState) {
+        if (gameState == GameManager.GameState.Countdown) {
+            Respawn();
+        }
     }
+
     #endregion
 
     #region Functions - Player Actions
-    public virtual void Move () {
+    protected virtual void Move () {
         Vector2 direction;
         direction = input_Movement;
         direction.Normalize();
         direction = direction * currentSpeed;
         rig.velocity = direction;
+        foreach(Vector2 force in appliedForces) {
+            rig.AddForce(force, ForceMode2D.Impulse);
+        }
     }
 
-    public virtual void Shoot (Vector2 direction) {
+    public virtual void AddInstantForce(Vector2 force, float time){
+        StartCoroutine(TimeToApplyForce(force, time));
+    }
+
+    public virtual IEnumerator TimeToApplyForce(Vector2 force, float time){
+        appliedForces.Add(force);
+        yield return new WaitForSeconds(time);
+        appliedForces.Remove(force);
+    }
+
+    protected virtual void Shoot (Vector2 direction) {
         if ((Time.time - timeSinceLastFire) > (1f/currentFireRate)) {
             timeSinceLastFire = Time.time;
             direction.Normalize();
+            if (direction == Vector2.zero) return;
             GameObject bulletInstance;
             bulletInstance = Instantiate(playerBullet, transform.position, transform.rotation);
             bulletInstance.GetComponent<PlayerBullet>().StartBullet(currentDamage, direction);
+        }
+    }
+
+    protected virtual void Push() {
+        if (input_Movement == Vector2.zero) {
+            return;
+        }
+
+        if ((Time.time - timeSinceLastPush) > currentPushCooldown) {
+            GameObject instance = Instantiate(pushHitbox,transform);
+            Vector2 direction = input_Movement.normalized;
+            instance.transform.localPosition = direction;
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg -90;
+            instance.transform.eulerAngles = Vector3.forward * angle;
+            instance.GetComponent<PushHitbox>().direction = direction;
+            timeSinceLastPush = Time.time;
         }
     }
     
@@ -178,6 +220,7 @@ public abstract class PlayerController : NetworkBehaviour
     }
 
     public virtual void Die () {
+        rig.velocity = Vector2.zero;
         isDead = true;
         enableControl = false;
     }
@@ -189,6 +232,9 @@ public abstract class PlayerController : NetworkBehaviour
         timeSinceLastAbility = Time.time - currentAbilityCooldown;
         isDead = false;
         enableControl = true;
+
+        // Debug position
+        transform.position  = Vector2.zero;
     }
 
     public virtual void ResetStats () {
@@ -199,6 +245,7 @@ public abstract class PlayerController : NetworkBehaviour
         currentMaxHealth = characterMaxHealth;
         currentHealth = currentMaxHealth;
         currentInvulnerabilityWindow = defaultInvulnerabilityWindow;
+        currentPushCooldown = defaultPushCooldown;
     }
 
     public virtual void Despawn () {
@@ -207,6 +254,20 @@ public abstract class PlayerController : NetworkBehaviour
     #endregion
 
     #region Functions - Input
+    public void InitializeInput(PlayerInput soulPlayerInput) {
+        playerSoul = soulPlayerInput.gameObject.GetComponent<PlayerSoul>();
+        playerInput = soulPlayerInput;
+        playerInput.actions["Movement"].performed += OnMove;
+        playerInput.actions["Shoot"].performed += OnShoot;
+        playerInput.actions["Shoot"].canceled += OnShoot;
+        playerInput.actions["Shoot Direction"].performed += OnShootDirection;
+        playerInput.actions["Special"].performed += OnSpecial;
+        playerInput.actions["Special"].canceled += OnSpecial;
+        playerInput.actions["Interact"].canceled += OnInteract;
+        playerInput.actions["Push"].performed += OnPush;
+        playerInput.actions["Push"].canceled += OnPush;
+    }
+
     public void OnMove(InputAction.CallbackContext context){
         input_Movement = context.ReadValue<Vector2>();
     }
@@ -221,6 +282,26 @@ public abstract class PlayerController : NetworkBehaviour
 
     public void OnShootDirection(InputAction.CallbackContext context){
         input_ShootDirection = context.ReadValue<Vector2>();
+    }
+
+    public void OnInteract(InputAction.CallbackContext context){
+        if (interactables.Count > 0) {
+            float minDistance = Mathf.Infinity;
+            GameObject selected = null;
+            foreach(GameObject interactable in interactables) {
+                float dist = Vector3.Distance(interactable.transform.position, transform.position);
+                if (dist < minDistance)
+                {
+                    selected = interactable;
+                    minDistance = dist;
+                }
+            }
+            selected?.GetComponent<Interactable>().Interact(this.gameObject);
+        }
+    }
+
+    public void OnPush(InputAction.CallbackContext context){
+        input_Push = context.action.triggered;
     }
     #endregion
 }

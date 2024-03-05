@@ -62,6 +62,24 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Interact"",
+                    ""type"": ""Button"",
+                    ""id"": ""eedd6e11-4458-47dd-a4ef-533d7f0afe15"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Push"",
+                    ""type"": ""Button"",
+                    ""id"": ""50685560-770f-4cbe-aeab-750de7a7d976"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -78,7 +96,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""def956d3-5542-4382-8dcb-65a021b5bd56"",
+                    ""id"": ""e411a327-2c93-4473-b592-01114e0a9d77"",
                     ""path"": ""<Gamepad>/leftTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -89,7 +107,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""f4eb1123-d663-4228-a08c-743637cb75f7"",
+                    ""id"": ""e4e9218b-1b9c-440a-8c5c-83a69f1aa7ea"",
                     ""path"": ""<Gamepad>/rightTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -177,7 +195,18 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""5e2029d2-de08-41a0-a0da-7f43202994e4"",
+                    ""id"": ""88177f99-8faa-4ee0-bd82-322a061f8e84"",
+                    ""path"": ""<Gamepad>/rightStick/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""Shoot"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e6958d9f-03f6-410a-8ac4-b2ffb79a5ed2"",
                     ""path"": ""<Gamepad>/rightStick/down"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -188,7 +217,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""d3891f4f-6e14-4648-8cd8-34e5c90b9c2a"",
+                    ""id"": ""12d421f2-58c3-42e2-a4f3-1a3ef015dbff"",
                     ""path"": ""<Gamepad>/rightStick/left"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -199,19 +228,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""93aae5ea-69f5-4180-b03c-bd9ac5ebfbf9"",
+                    ""id"": ""cab67fd2-4a32-4012-8156-1433a6e22168"",
                     ""path"": ""<Gamepad>/rightStick/right"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Gamepad"",
-                    ""action"": ""Shoot"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""7a8718ad-79d3-4cbd-a20f-08afbb615618"",
-                    ""path"": ""<Gamepad>/rightStick/up"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Gamepad"",
@@ -238,6 +256,61 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": ""StickDeadzone(min=0.2,max=1)"",
                     ""groups"": ""Gamepad"",
                     ""action"": ""Shoot Direction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""96d4700c-a7f7-427c-a8b4-c3b672dff2b1"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""297c8559-e786-4773-b154-44426f3d858d"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""14f335c5-19b4-4af3-91ad-fe3621c68056"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""Push"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""653011e3-7296-468d-b40b-adbe5d68e05f"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""Push"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d213c886-9a78-4728-bcf1-007a91682f14"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""Push"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -834,6 +907,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Player_Special = m_Player.FindAction("Special", throwIfNotFound: true);
         m_Player_Shoot = m_Player.FindAction("Shoot", throwIfNotFound: true);
         m_Player_ShootDirection = m_Player.FindAction("Shoot Direction", throwIfNotFound: true);
+        m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
+        m_Player_Push = m_Player.FindAction("Push", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -911,6 +986,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Special;
     private readonly InputAction m_Player_Shoot;
     private readonly InputAction m_Player_ShootDirection;
+    private readonly InputAction m_Player_Interact;
+    private readonly InputAction m_Player_Push;
     public struct PlayerActions
     {
         private @PlayerControls m_Wrapper;
@@ -919,6 +996,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @Special => m_Wrapper.m_Player_Special;
         public InputAction @Shoot => m_Wrapper.m_Player_Shoot;
         public InputAction @ShootDirection => m_Wrapper.m_Player_ShootDirection;
+        public InputAction @Interact => m_Wrapper.m_Player_Interact;
+        public InputAction @Push => m_Wrapper.m_Player_Push;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -940,6 +1019,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @ShootDirection.started += instance.OnShootDirection;
             @ShootDirection.performed += instance.OnShootDirection;
             @ShootDirection.canceled += instance.OnShootDirection;
+            @Interact.started += instance.OnInteract;
+            @Interact.performed += instance.OnInteract;
+            @Interact.canceled += instance.OnInteract;
+            @Push.started += instance.OnPush;
+            @Push.performed += instance.OnPush;
+            @Push.canceled += instance.OnPush;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -956,6 +1041,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @ShootDirection.started -= instance.OnShootDirection;
             @ShootDirection.performed -= instance.OnShootDirection;
             @ShootDirection.canceled -= instance.OnShootDirection;
+            @Interact.started -= instance.OnInteract;
+            @Interact.performed -= instance.OnInteract;
+            @Interact.canceled -= instance.OnInteract;
+            @Push.started -= instance.OnPush;
+            @Push.performed -= instance.OnPush;
+            @Push.canceled -= instance.OnPush;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1115,6 +1206,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnSpecial(InputAction.CallbackContext context);
         void OnShoot(InputAction.CallbackContext context);
         void OnShootDirection(InputAction.CallbackContext context);
+        void OnInteract(InputAction.CallbackContext context);
+        void OnPush(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

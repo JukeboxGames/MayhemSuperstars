@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Maps
   m_EditorClassIdentifier: 
   mapNames:
-  - Lobby
+  - DebugScene

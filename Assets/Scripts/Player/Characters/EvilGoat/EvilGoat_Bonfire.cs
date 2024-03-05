@@ -26,9 +26,7 @@ public class EvilGoat_Bonfire : MonoBehaviour
 
         if (collision.gameObject.tag == "Wall" || collision.gameObject.tag == "Enemy")
         {   
-            if (collision.gameObject.GetComponent<IDamageable>() != null) {
-                collision.gameObject.GetComponent<IDamageable>().GetHit(damage);
-            }
+            collision.gameObject.GetComponent<IDamageable>()?.GetHit(damage);
 
             Destroy(this.gameObject);
         }

@@ -43,13 +43,26 @@ public class LocalSoulSpawner : NetworkBehaviour
             return;
         }
 
+        if (GameObject.FindGameObjectWithTag("GameManager") == null) {
+            return;
+        }
+
+        GameObject gm = GameObject.FindGameObjectWithTag("GameManager");
+        
+        if (!gm.GetComponent<GameManager>().CheckAvailability()) {
+            return;
+        }
+
         SpawnSoulServerRpc();
     }
 
     [ServerRpc(RequireOwnership = false)]
     void SpawnSoulServerRpc (ServerRpcParams serverRpcParams = default) {
+        
         ulong clientId = serverRpcParams.Receive.SenderClientId;
         GameObject soul = Instantiate(soulPrefab);
         soul.GetComponent<NetworkObject>().SpawnWithOwnership(clientId);
+        
+        
     }
 }
