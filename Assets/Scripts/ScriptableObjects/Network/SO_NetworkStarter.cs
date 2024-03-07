@@ -16,6 +16,7 @@ public class SO_NetworkStarter : ScriptableObject, ISerializationCallbackReceive
     private string defaultJoinCode = "";
     #endregion
 
+    [SerializeField] private GameObject gameManagerPrefab;
     public string joinCode;
 
     // Provide starting values to variables
@@ -29,6 +30,8 @@ public class SO_NetworkStarter : ScriptableObject, ISerializationCallbackReceive
         try {
 			NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData("127.0.0.1", (ushort)7777);
 			NetworkManager.Singleton.StartHost();
+            Instantiate(gameManagerPrefab);
+            NetworkManager.Singleton.gameObject.GetComponent<HandleMaxPlayers>().SearchGM();
             NetworkManager.Singleton.SceneManager.LoadScene("Lobby", LoadSceneMode.Single);
 		} catch (RelayServiceException e){
 			Debug.Log(e);
@@ -44,6 +47,8 @@ public class SO_NetworkStarter : ScriptableObject, ISerializationCallbackReceive
 			RelayServerData relayServerData = new RelayServerData(allocation, "dtls");
 			NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
 			NetworkManager.Singleton.StartHost();
+            Instantiate(gameManagerPrefab);
+            NetworkManager.Singleton.gameObject.GetComponent<HandleMaxPlayers>().SearchGM();
             NetworkManager.Singleton.SceneManager.LoadScene("Lobby", LoadSceneMode.Single);
             Debug.Log("Join Code is " + joinCode);
 		} catch (RelayServiceException e){

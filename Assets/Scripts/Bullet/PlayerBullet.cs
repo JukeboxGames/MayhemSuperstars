@@ -12,10 +12,10 @@ public abstract class PlayerBullet : MonoBehaviour
         GetComponent<Rigidbody2D>().velocity = (direction) * (playerBulletSpeed);
     }
 
-    public virtual void OnTriggerEnter2D(Collider2D collision)
+    public virtual void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Wall" || collision.gameObject.tag == "Enemy" || collision.gameObject.tag == "MapBorders")
-        {   
+        {
             if (collision.gameObject.GetComponent<IDamageable>() != null) {
                 collision.gameObject.GetComponent<IDamageable>().GetHit(bulletDamage);
             }

@@ -8,6 +8,8 @@ TagManager:
   - Player Bullet
   - Enemy Bullet
   - Enemy
+  - LocalSoulSpawner
+  - GameManager
   layers:
   - Default
   - TransparentFX

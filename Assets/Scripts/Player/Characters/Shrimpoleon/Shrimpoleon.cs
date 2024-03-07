@@ -15,20 +15,20 @@ public class Shrimpoleon : PlayerController
     public override void CastSpecialAbility() {
         if ((Time.time - timeSinceLastAbility) > (currentAbilityCooldown)) {
             Vector2 direction;
-            if (playerInput.devices[0].ToString() == "Keyboard:/Keyboard" || playerInput.devices[0].ToString() == "Mouse:/Mouse") {
+            if (playerInput.currentControlScheme == "Keyboard") {
                 Vector3 worldMousePos = Camera.main.ScreenToWorldPoint(input_ShootDirection);
                 direction = worldMousePos - transform.position;
             } else {
                 direction = input_ShootDirection;
-                if (direction == Vector2.zero) {
-                    return;
-                }
             }
+
+            if (direction == Vector2.zero) return;
 
             // Encontrar dirección de disparo
             direction.Normalize();
 
             GameObject instance = Instantiate(balloon, transform.position, transform.rotation);
+            Physics2D.IgnoreCollision(instance.GetComponent<Collider2D>(), GetComponent<Collider2D>());
             instance.GetComponent<PlayerBullet>().StartBullet(0, direction);
 
             // Actualizar tiempo de cooldown

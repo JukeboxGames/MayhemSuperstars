@@ -2557,6 +2557,7 @@ GameObject:
   - component: {fileID: 1407297610}
   - component: {fileID: 1407297609}
   - component: {fileID: 1407297608}
+  - component: {fileID: 1407297611}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -2609,10 +2610,13 @@ MonoBehaviour:
     PlayerPrefab: {fileID: 6231492056552428496, guid: d725fbbea48d8a844a2c49e8fd9d5571, type: 3}
     Prefabs:
       NetworkPrefabsLists:
+      - {fileID: 11400000, guid: fb6fffa2628cb904cbfe8bbbb50d3992, type: 2}
+      - {fileID: 11400000, guid: e4aa887d770b137448a44be312b4136f, type: 2}
       - {fileID: 11400000, guid: a04df37a3ad196244ace1463ee4dda78, type: 2}
+      - {fileID: 11400000, guid: 051285870fe2a7c449eca82645d076c1, type: 2}
     TickRate: 30
     ClientConnectionBufferTimeout: 10
-    ConnectionApproval: 0
+    ConnectionApproval: 1
     ConnectionData: 
     EnableTimeResync: 0
     TimeResyncInterval: 30
@@ -2643,6 +2647,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1407297611
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1407297607}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49349ec133ff46441a8f7fcab32b23bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1413071469
 GameObject:
   m_ObjectHideFlags: 0

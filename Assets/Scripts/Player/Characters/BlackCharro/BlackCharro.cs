@@ -43,7 +43,7 @@ public class BlackCharro : PlayerController
     Vector2 GetSlashDirection () {
         // Get Direction
         Vector2 direction;
-        if (playerInput.devices[0].ToString() == "Keyboard:/Keyboard" || playerInput.devices[0].ToString() == "Mouse:/Mouse") {
+        if (playerInput.currentControlScheme == "Keyboard") {
             Vector3 worldMousePos = Camera.main.ScreenToWorldPoint(input_ShootDirection);
             direction = worldMousePos - transform.position;
         } else {

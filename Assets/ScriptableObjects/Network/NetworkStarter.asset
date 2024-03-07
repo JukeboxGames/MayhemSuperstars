@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b0a450db0735114baf5caa1ecce4eb0, type: 3}
   m_Name: NetworkStarter
   m_EditorClassIdentifier: 
+  gameManagerPrefab: {fileID: 8511797637914576348, guid: 0411f35a7e824394bae3cf001e6f47fe, type: 3}
   joinCode: 
