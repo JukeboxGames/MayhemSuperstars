@@ -1,14 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class PushHitbox : MonoBehaviour
+public class PushHitbox : NetworkBehaviour
 {
-    public Vector2 direction;
+    public NetworkVariable<Vector2> direction = new NetworkVariable<Vector2>();
+    public NetworkVariable<int> playerNumber = new NetworkVariable<int>();
 
-    void Awake () {
-        Physics2D.IgnoreCollision(GetComponent<Collider2D>(), transform.parent.GetComponent<Collider2D>());
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
         StartCoroutine(SelfDestruct());
     }
 
@@ -16,12 +19,17 @@ public class PushHitbox : MonoBehaviour
     {
         if (collision.gameObject.tag == "Player")
         {   
-            collision.gameObject.GetComponent<PlayerController>().AddInstantForce(direction * 10f, 0.3f);
+            PlayerController player = collision.gameObject.GetComponent<PlayerController>();
+            if (player.playerNumber.Value != playerNumber.Value) {
+                player.AddInstantForce(direction.Value * 10f, 0.3f);
+            }
         }
     }
 
     IEnumerator SelfDestruct () {
-        yield return new WaitForSeconds(0.1f);
-        Destroy(this.gameObject);
+        yield return new WaitForSeconds(0.3f);
+        if (IsServer) {
+            gameObject.GetComponent<NetworkObject>().Despawn();
+        }
     }
 }

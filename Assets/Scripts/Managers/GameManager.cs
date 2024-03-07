@@ -38,10 +38,11 @@ public class GameManager : NetworkBehaviour
         NetworkManager.SceneManager.OnSceneEvent += OnNetworkSceneLoaded;
     }
 
-    public void JoinPlayer (GameObject soul) {
+    public int JoinPlayer (GameObject soul) {
         playerSoulArray[numberOfPlayers.Value] = soul;
         numberOfPlayers.Value++;
         changedNumberOfPlayers?.Invoke();
+        return numberOfPlayers.Value;
     }
 
     public bool CheckAvailability () {

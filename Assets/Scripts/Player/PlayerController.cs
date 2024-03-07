@@ -6,6 +6,8 @@ using Unity.Collections;
 using UnityEngine.InputSystem;
 using Unity.VisualScripting;
 using System.Collections.Generic;
+using Unity.Mathematics;
+using Unity.Netcode.Components;
 
 public abstract class PlayerController : NetworkBehaviour, IReactToGameState
 {
@@ -13,13 +15,18 @@ public abstract class PlayerController : NetworkBehaviour, IReactToGameState
     #region Variables - This GameObject References
     [HideInInspector] public Rigidbody2D rig;
     [HideInInspector] public PlayerInput playerInput;
+    public NetworkVariable<int> playerNumber = new NetworkVariable<int>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     #endregion
 
     #region Variables - Object References
     [SerializeField] private GameObject playerBullet;
+    [SerializeField] private GameObject fakePlayerBullet;
     [SerializeField] private GameObject pushHitbox;
     [HideInInspector] public PlayerSoul playerSoul;
     [SerializeField] private SO_GameState so_GameState;
+    [SerializeField] protected SO_Bullets so_Bullets;
+    [SerializeField] private SO_FakeBullets so_FakeBullets;
+    [HideInInspector] public int bulletIndex = 0;
     public List<GameObject> interactables = new List<GameObject>();
     #endregion
 
@@ -148,13 +155,35 @@ public abstract class PlayerController : NetworkBehaviour, IReactToGameState
     }
 
     protected virtual void Shoot (Vector2 direction) {
+        if (direction == Vector2.zero) return;
         if ((Time.time - timeSinceLastFire) > (1f/currentFireRate)) {
             timeSinceLastFire = Time.time;
             direction.Normalize();
-            if (direction == Vector2.zero) return;
+            
             GameObject bulletInstance;
-            bulletInstance = Instantiate(playerBullet, transform.position, transform.rotation);
+            bulletInstance = Instantiate(so_Bullets.bulletPrefabs[bulletIndex], transform.position, transform.rotation);
             bulletInstance.GetComponent<PlayerBullet>().StartBullet(currentDamage, direction);
+            SpawnFakeBulletServerRpc(bulletIndex, transform.position, direction);
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    protected void SpawnFakeBulletServerRpc(int bulletIdx, Vector2 startPos, Vector2 direction, ServerRpcParams serverRpcParams = default){
+        ulong senderId = serverRpcParams.Receive.SenderClientId;
+        if (senderId != NetworkManager.Singleton.LocalClientId){
+            GameObject bulletInstance;
+            bulletInstance = Instantiate(so_FakeBullets.fakeBulletPrefabs[bulletIdx], startPos, Quaternion.identity);
+            bulletInstance.GetComponent<FakePlayerBullet>().StartBullet(direction);
+        }
+        SpawnFakeBulletClientRpc(bulletIdx, startPos, direction, senderId);
+    }
+
+    [ClientRpc]
+    protected void SpawnFakeBulletClientRpc (int bulletIdx, Vector2 startPos, Vector2 direction, ulong senderId) {
+        if (senderId != NetworkManager.Singleton.LocalClientId && !IsServer){
+            GameObject bulletInstance;
+            bulletInstance = Instantiate(so_FakeBullets.fakeBulletPrefabs[bulletIdx], startPos, Quaternion.identity);
+            bulletInstance.GetComponent<FakePlayerBullet>().StartBullet(direction);
         }
     }
 
@@ -164,13 +193,23 @@ public abstract class PlayerController : NetworkBehaviour, IReactToGameState
         }
 
         if ((Time.time - timeSinceLastPush) > currentPushCooldown) {
-            GameObject instance = Instantiate(pushHitbox,transform);
             Vector2 direction = input_Movement.normalized;
-            instance.transform.localPosition = direction;
-            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg -90;
-            instance.transform.eulerAngles = Vector3.forward * angle;
-            instance.GetComponent<PushHitbox>().direction = direction;
+            PushServerRpc(direction, transform.position, gameObject);
             timeSinceLastPush = Time.time;
+        }
+    }
+
+    [ServerRpc]
+    protected void PushServerRpc(Vector2 direction, Vector2 pos, NetworkObjectReference vess){
+        if (vess.TryGet(out NetworkObject obj) ){
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg -90;
+            Quaternion quat = Quaternion.identity;
+            quat.eulerAngles = Vector3.forward * angle;
+            GameObject instance = Instantiate(pushHitbox, obj.gameObject.transform.position + (Vector3)direction, quat/*,obj.gameObject.transform*/);
+            instance.GetComponent<NetworkObject>().Spawn();
+            //instance.GetComponent<NetworkTransform>().Teleport(obj.gameObject.transform.position + (Vector3)direction,quat, Vector3.one * 1.5f);
+            instance.GetComponent<PushHitbox>().direction.Value = direction;
+            instance.GetComponent<PushHitbox>().playerNumber.Value = obj.gameObject.GetComponent<PlayerController>().playerNumber.Value;
         }
     }
     
@@ -256,6 +295,7 @@ public abstract class PlayerController : NetworkBehaviour, IReactToGameState
     #region Functions - Input
     public void InitializeInput(PlayerInput soulPlayerInput) {
         playerSoul = soulPlayerInput.gameObject.GetComponent<PlayerSoul>();
+        playerNumber.Value = playerSoul.playerNumber.Value;
         playerInput = soulPlayerInput;
         playerInput.actions["Movement"].performed += OnMove;
         playerInput.actions["Shoot"].performed += OnShoot;

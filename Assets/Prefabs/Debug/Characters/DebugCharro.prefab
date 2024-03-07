@@ -166,9 +166,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rig: {fileID: 0}
   playerInput: {fileID: 0}
+  playerNumber:
+    m_InternalValue: 0
   playerBullet: {fileID: 609364855216714387, guid: 966170eb4dee0f9418c8c8bdf0bec878, type: 3}
+  fakePlayerBullet: {fileID: 609364855216714387, guid: e31d3f5dddb438e46a00868a015dfa23, type: 3}
   pushHitbox: {fileID: 5808247941602645054, guid: 7c38a01342d6dd249a154b0d1902dbd4, type: 3}
   playerSoul: {fileID: 0}
+  so_GameState: {fileID: 11400000, guid: 356171b94737aa448a8b7b7dce63d9e8, type: 2}
+  so_Bullets: {fileID: 11400000, guid: f6cbc2ee1f6b7c54983d6745de9e21c0, type: 2}
+  so_FakeBullets: {fileID: 11400000, guid: 398dbefb54919d4478b4152518573ab3, type: 2}
+  bulletIndex: 0
   interactables: []
   currentSpeed: 0
   currentMaxHealth: 0
@@ -181,7 +188,6 @@ MonoBehaviour:
   defaultPushCooldown: 0.5
   currentPushCooldown: 0.5
   isDead: 0
-  isSliding: 0
   slash: {fileID: 5808247941602645054, guid: 289f10da162f5314da71bb52b942923d, type: 3}
   slashDistanceFromPlayer: 1
   slashDuration: 0.2

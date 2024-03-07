@@ -14,6 +14,7 @@ public class PlayerSoul : NetworkBehaviour
     Vector2 currentPosition;
     [HideInInspector] public int characterIndex = 0;
     private bool joined = false;
+    public NetworkVariable<int> playerNumber = new NetworkVariable<int>();
     
     private void OnEnable () {
         SceneManager.sceneLoaded += OnSceneLoaded;
@@ -23,7 +24,6 @@ public class PlayerSoul : NetworkBehaviour
         base.OnNetworkSpawn();
         if (IsOwner) {
             StartCoroutine(WaitToJoin());
-            StartCoroutine(WaitToChangeCharacter(0));   
         } else {
             Destroy(gameObject.GetComponent<PlayerInput>());
         }
@@ -57,7 +57,10 @@ public class PlayerSoul : NetworkBehaviour
     }
 
     private IEnumerator WaitToChangeCharacter (int i) {
-        yield return new WaitForEndOfFrame();
+        while (!joined){
+            yield return new WaitForEndOfFrame();
+        }
+        
         ChangeCharacter(i);
     }
 
@@ -76,7 +79,20 @@ public class PlayerSoul : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     void JoinPlayerServerRpc (NetworkObjectReference soul) {
         GameManager gm = GameObject.FindGameObjectWithTag("GameManager")?.GetComponent<GameManager>();
-        gm?.JoinPlayer(soul);
+        int pNum = gm.JoinPlayer(soul);
+        playerNumber.Value = pNum;
+        if (soul.TryGet(out NetworkObject obj)){
+            ConfirmPlayerNumberClientRpc(obj, pNum);
+        }
+        
+    }
+
+    [ClientRpc]
+    void ConfirmPlayerNumberClientRpc(NetworkObjectReference soul, int pNum){
+        if (soul.TryGet(out NetworkObject obj)){
+            StartCoroutine(obj.gameObject.GetComponent<PlayerSoul>().WaitToChangeCharacter(0));   
+        }
+        
     }
 
     [ServerRpc(RequireOwnership = false)]
