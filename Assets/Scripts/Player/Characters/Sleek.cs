@@ -8,7 +8,7 @@ public class Sleek : PlayerController
     public override int characterMaxHealth { get{return 2;} }
     public override int characterFireRate { get{return 3;} }
     public override int characterDamage { get{return 2;} }
-    public override float characterAbilityCooldown { get{return 1.5f;} }
+    public override float characterAbilityCooldown { get{return 0.5f;} }
 
     [SerializeField] private float dashDistance;
     [SerializeField] private float dashTime;

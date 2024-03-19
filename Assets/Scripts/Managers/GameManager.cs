@@ -58,7 +58,7 @@ public class GameManager : NetworkBehaviour
     {
         if (sceneEvent.SceneEventType == SceneEventType.LoadEventCompleted){
             if (SceneManager.GetActiveScene().name == "Lobby") {
-                state = GameState.Lobby;
+                UpdateGameState(GameState.Lobby);
             }
 
             if (Array.Exists(mapsSO.mapNames, element => element == SceneManager.GetActiveScene().name)) {
@@ -80,13 +80,13 @@ public class GameManager : NetworkBehaviour
                     break;
                 case GameState.Countdown:
                     recordTime = true;
-                    timer.Value = 1f;
+                    timer.Value = 3f;
                     break;
                 case GameState.Round:
-                    timer.Value = 1f;
+                    timer.Value = 30f;
                     break;
                 case GameState.TimesUp:
-                    timer.Value = 1f;
+                    timer.Value = 3f;
                     break;
                 case GameState.Leaderboard:
                     timer.Value = 5f;
@@ -156,7 +156,8 @@ public class GameManager : NetworkBehaviour
                 return true;
             }
         }
-        return false;
+        //return false;
+        return true;
     }
 
     [ClientRpc]

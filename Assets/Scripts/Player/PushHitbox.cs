@@ -21,8 +21,10 @@ public class PushHitbox : NetworkBehaviour
         {   
             PlayerController player = collision.gameObject.GetComponent<PlayerController>();
             if (player.playerNumber.Value != playerNumber.Value) {
-                player.AddInstantForce(direction.Value * 10f, 0.3f);
+                player.AddInstantForce(direction.Value * 10f, 0.3f); 
             }
+        } else if (collision.gameObject.GetComponent<IPushable>() != null) {
+            collision.gameObject.GetComponent<IPushable>().AddInstantForce(direction.Value * 10f, 0.3f);
         }
     }
 

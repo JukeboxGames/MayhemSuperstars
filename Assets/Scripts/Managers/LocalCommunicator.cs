@@ -2,13 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SocialPlatforms;
 
 public class LocalCommunicator : MonoBehaviour
 {
+    public static LocalCommunicator instance;
     private GameManager gm;
     [SerializeField] private SO_GameState so_GameState;
     bool foundGM = false;
+
     void Awake () {
+        if (instance != null && instance != this) { 
+            Destroy(this.gameObject); 
+        }
+        else { 
+            instance = this; 
+        }
+
         StartCoroutine(SearchForGameManager());
     }
 

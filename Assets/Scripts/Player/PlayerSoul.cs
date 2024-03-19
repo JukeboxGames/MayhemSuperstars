@@ -5,12 +5,15 @@ using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using System.Collections;
+using Unity.VisualScripting;
 
 public class PlayerSoul : NetworkBehaviour
 {
     [HideInInspector] public GameObject vessel;
     [SerializeField] private SO_Characters characterSO;
     [SerializeField] private SO_Maps mapsSO;
+    [SerializeField] private PlayerCamera playerCameraComponent;
+    [SerializeField] private PlayerUI playerUiComponent;
     Vector2 currentPosition;
     [HideInInspector] public int characterIndex = 0;
     private bool joined = false;
@@ -48,7 +51,7 @@ public class PlayerSoul : NetworkBehaviour
     {
         // TODO: Add MAP LIST to call for CHANGE CHARACTER on scene loaded
         if (Array.Exists(mapsSO.mapNames, element => element == scene.name)) {
-            StartCoroutine(WaitToChangeCharacter(0));
+            StartCoroutine(WaitToChangeCharacter(characterIndex));
         }
 
         if (scene.name == "Lobby") {
@@ -90,7 +93,8 @@ public class PlayerSoul : NetworkBehaviour
     [ClientRpc]
     void ConfirmPlayerNumberClientRpc(NetworkObjectReference soul, int pNum){
         if (soul.TryGet(out NetworkObject obj)){
-            StartCoroutine(obj.gameObject.GetComponent<PlayerSoul>().WaitToChangeCharacter(0));   
+            StartCoroutine(obj.gameObject.GetComponent<PlayerSoul>().WaitToChangeCharacter(0));
+            playerUiComponent.SetPlayerEvents(pNum);
         }
         
     }
@@ -134,6 +138,7 @@ public class PlayerSoul : NetworkBehaviour
         if (vess.TryGet(out NetworkObject obj))
         {
             vessel = obj.gameObject;
+            playerCameraComponent.ChangeCameraTarget(vessel);
             vessel.transform.position = currentPosition;
             obj.gameObject.GetComponent<PlayerController>().InitializeInput(GetComponent<PlayerInput>());
         }

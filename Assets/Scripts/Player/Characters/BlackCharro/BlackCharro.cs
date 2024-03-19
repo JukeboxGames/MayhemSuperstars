@@ -8,7 +8,7 @@ public class BlackCharro : PlayerController
     public override int characterMaxHealth { get{return 4;} }
     public override int characterFireRate { get{return 2;} }
     public override int characterDamage { get{return 4;} }
-    public override float characterAbilityCooldown { get{return 2f;} }
+    public override float characterAbilityCooldown { get{return 1f;} }
 
     [SerializeField] private GameObject slash;
     [SerializeField] private float slashDistanceFromPlayer;
