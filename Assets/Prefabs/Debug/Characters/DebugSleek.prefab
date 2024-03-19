@@ -168,6 +168,11 @@ MonoBehaviour:
   playerInput: {fileID: 0}
   playerNumber:
     m_InternalValue: 0
+  playerEvents_SOs:
+  - {fileID: 11400000, guid: 203385ecda44efd46b9e5166711a744f, type: 2}
+  - {fileID: 11400000, guid: ce069dd58334f7a4da3b7a54c45bbf1d, type: 2}
+  - {fileID: 11400000, guid: 89f3609023761294f8358099d747196c, type: 2}
+  - {fileID: 11400000, guid: f5dffb870410ac74ab95abd37ecc4864, type: 2}
   playerBullet: {fileID: 609364855216714387, guid: 966170eb4dee0f9418c8c8bdf0bec878, type: 3}
   fakePlayerBullet: {fileID: 609364855216714387, guid: e31d3f5dddb438e46a00868a015dfa23, type: 3}
   pushHitbox: {fileID: 5808247941602645054, guid: 7c38a01342d6dd249a154b0d1902dbd4, type: 3}
@@ -189,7 +194,7 @@ MonoBehaviour:
   currentPushCooldown: 0.5
   isDead: 0
   dashDistance: 5
-  dashTime: 0.5
+  dashTime: 0.3
 --- !u!114 &-7601073688907781458
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -7,6 +7,7 @@ public class EvilGoat_Bonfire : MonoBehaviour
     public int damage;
     private bool enableDamage = false;
 
+    
     public IEnumerator StartBonfire(float enableTime) {
         yield return new WaitForSeconds(enableTime);
         enableDamage = true;

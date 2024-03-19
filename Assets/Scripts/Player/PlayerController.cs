@@ -9,13 +9,15 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using Unity.Netcode.Components;
 
-public abstract class PlayerController : NetworkBehaviour, IReactToGameState
+public abstract class PlayerController : NetworkBehaviour, IReactToGameState, IPushable
 {
 
     #region Variables - This GameObject References
     [HideInInspector] public Rigidbody2D rig;
     [HideInInspector] public PlayerInput playerInput;
     public NetworkVariable<int> playerNumber = new NetworkVariable<int>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    [SerializeField] private SO_PlayerEvents[] playerEvents_SOs;
+    private SO_PlayerEvents myPlayerEventSO;
     #endregion
 
     #region Variables - Object References
@@ -27,7 +29,7 @@ public abstract class PlayerController : NetworkBehaviour, IReactToGameState
     [SerializeField] protected SO_Bullets so_Bullets;
     [SerializeField] private SO_FakeBullets so_FakeBullets;
     [HideInInspector] public int bulletIndex = 0;
-    public List<GameObject> interactables = new List<GameObject>();
+    [HideInInspector] public List<GameObject> interactables = new List<GameObject>();
     #endregion
 
     #region Variables - Input Variables
@@ -90,6 +92,10 @@ public abstract class PlayerController : NetworkBehaviour, IReactToGameState
     void Start () {
         rig = gameObject.GetComponent<Rigidbody2D>();
         so_GameState.gameState.AddListener(ReactToGameState);
+    }
+
+    public override void OnNetworkSpawn (){
+        base.OnNetworkSpawn();
         Respawn();
     }
 
@@ -116,6 +122,7 @@ public abstract class PlayerController : NetworkBehaviour, IReactToGameState
         if (input_Special)
         {
             CastSpecialAbility();
+            //GetHit();
         }
 
         if(input_Push)
@@ -125,8 +132,15 @@ public abstract class PlayerController : NetworkBehaviour, IReactToGameState
     }
 
     public void ReactToGameState(GameManager.GameState gameState) {
-        if (gameState == GameManager.GameState.Countdown) {
-            Respawn();
+        switch(gameState){
+            case GameManager.GameState.Countdown:
+                Respawn();
+                break;
+            case GameManager.GameState.WinScreen:
+                enableControl = false;
+                break;
+            default:
+                break;
         }
     }
 
@@ -205,9 +219,8 @@ public abstract class PlayerController : NetworkBehaviour, IReactToGameState
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg -90;
             Quaternion quat = Quaternion.identity;
             quat.eulerAngles = Vector3.forward * angle;
-            GameObject instance = Instantiate(pushHitbox, obj.gameObject.transform.position + (Vector3)direction, quat/*,obj.gameObject.transform*/);
+            GameObject instance = Instantiate(pushHitbox, obj.gameObject.transform.position + (Vector3)direction, quat);
             instance.GetComponent<NetworkObject>().Spawn();
-            //instance.GetComponent<NetworkTransform>().Teleport(obj.gameObject.transform.position + (Vector3)direction,quat, Vector3.one * 1.5f);
             instance.GetComponent<PushHitbox>().direction.Value = direction;
             instance.GetComponent<PushHitbox>().playerNumber.Value = obj.gameObject.GetComponent<PlayerController>().playerNumber.Value;
         }
@@ -225,9 +238,11 @@ public abstract class PlayerController : NetworkBehaviour, IReactToGameState
         }
 
         currentHealth -= 1;
+        myPlayerEventSO?.event_PlayerHealthChanged.Invoke(currentHealth);
 
         if (currentHealth <= 0) {
             Die();
+            myPlayerEventSO.event_PlayerDead.Invoke();
         } else {
             RecordInvulnerability(currentInvulnerabilityWindow);
         }
@@ -239,10 +254,13 @@ public abstract class PlayerController : NetworkBehaviour, IReactToGameState
         }
 
         currentHealth -= damage;
+        myPlayerEventSO?.event_PlayerHealthChanged.Invoke(currentHealth);
 
         if (currentHealth <= 0) {
             Die();
+            myPlayerEventSO?.event_PlayerDead.Invoke();
         } else {
+            
             RecordInvulnerability(currentInvulnerabilityWindow);
         }
     }
@@ -268,12 +286,11 @@ public abstract class PlayerController : NetworkBehaviour, IReactToGameState
     #region Functions - Player Response to Game State
     public virtual void Respawn () {
         ResetStats();
+        myPlayerEventSO?.event_PlayerHealthChanged.Invoke(currentHealth);
         timeSinceLastAbility = Time.time - currentAbilityCooldown;
         isDead = false;
         enableControl = true;
-
-        // Debug position
-        transform.position  = Vector2.zero;
+        transform.position = Vector2.zero;
     }
 
     public virtual void ResetStats () {
@@ -289,6 +306,7 @@ public abstract class PlayerController : NetworkBehaviour, IReactToGameState
 
     public virtual void Despawn () {
         enableControl = false;
+        transform.position = new Vector2(0f,50f);
     }
     #endregion
 
@@ -296,6 +314,8 @@ public abstract class PlayerController : NetworkBehaviour, IReactToGameState
     public void InitializeInput(PlayerInput soulPlayerInput) {
         playerSoul = soulPlayerInput.gameObject.GetComponent<PlayerSoul>();
         playerNumber.Value = playerSoul.playerNumber.Value;
+        myPlayerEventSO = playerEvents_SOs[playerNumber.Value-1];
+        myPlayerEventSO.event_PlayerHealthChanged.Invoke(characterMaxHealth);
         playerInput = soulPlayerInput;
         playerInput.actions["Movement"].performed += OnMove;
         playerInput.actions["Shoot"].performed += OnShoot;
@@ -325,7 +345,7 @@ public abstract class PlayerController : NetworkBehaviour, IReactToGameState
     }
 
     public void OnInteract(InputAction.CallbackContext context){
-        if (interactables.Count > 0) {
+        if (interactables.Count > 0 && enableControl) {
             float minDistance = Mathf.Infinity;
             GameObject selected = null;
             foreach(GameObject interactable in interactables) {
@@ -336,7 +356,7 @@ public abstract class PlayerController : NetworkBehaviour, IReactToGameState
                     minDistance = dist;
                 }
             }
-            selected?.GetComponent<Interactable>().Interact(this.gameObject);
+            selected?.GetComponent<IInteractable>().Interact(this.gameObject);
         }
     }
 

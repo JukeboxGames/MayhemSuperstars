@@ -15,11 +15,6 @@ public class BalloonBullet : PlayerBullet
         
     }
 
-    public override void OnCollisionEnter2D(Collision2D collision)
-    {
-        
-    }
-
     private void OnCollisionStay2D(Collision2D collision) {
         if (!canCollide) {
             return;

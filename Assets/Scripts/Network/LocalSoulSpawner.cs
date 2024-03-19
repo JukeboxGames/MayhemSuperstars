@@ -6,6 +6,8 @@ using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.InputSystem.Users;
 using UnityEngine;
 using Unity.Netcode;
+using Unity.VisualScripting;
+using UnityEngine.SceneManagement;
 
 public class LocalSoulSpawner : NetworkBehaviour
 {
@@ -43,11 +45,17 @@ public class LocalSoulSpawner : NetworkBehaviour
             return;
         }
 
+        if (SceneManager.GetActiveScene().name != "Lobby") {
+            return;
+        }
+
         if (GameObject.FindGameObjectWithTag("GameManager") == null) {
             return;
         }
 
         GameObject gm = GameObject.FindGameObjectWithTag("GameManager");
+
+        
         
         if (!gm.GetComponent<GameManager>().CheckAvailability()) {
             return;

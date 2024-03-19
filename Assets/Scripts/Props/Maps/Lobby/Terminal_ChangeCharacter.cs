@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Terminal_ChangeCharacter : Interactable
+public class Terminal_ChangeCharacter : MonoBehaviour, IInteractable
 {
     [SerializeField] private SO_Characters characterSO;
 
-    public override void Interact (GameObject vessel = null){
+    public void Interact (GameObject vessel = null){
         PlayerSoul soul = vessel?.GetComponent<PlayerController>().playerSoul;
         if (soul != null) {
             soul.characterIndex++;
@@ -15,6 +15,21 @@ public class Terminal_ChangeCharacter : Interactable
             }
             soul.ChangeCharacter(soul.characterIndex);
         }
-        
+    }
+
+    void OnTriggerEnter2D(Collider2D other) {
+        if (other.gameObject.tag == "Player") {
+            if (!other.gameObject.GetComponent<PlayerController>().interactables.Contains(this.gameObject)) {
+                other.gameObject.GetComponent<PlayerController>().interactables.Add(this.gameObject);
+            }
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D other) {
+        if (other.gameObject.tag == "Player") {
+            if (other.gameObject.GetComponent<PlayerController>().interactables.Contains(this.gameObject)) {
+                other.gameObject.GetComponent<PlayerController>().interactables.Remove(this.gameObject);
+            }
+        }
     }
 }
