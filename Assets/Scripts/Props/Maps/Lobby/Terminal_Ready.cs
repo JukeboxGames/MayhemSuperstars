@@ -6,11 +6,13 @@ using UnityEngine.SceneManagement;
 
 public class Terminal_Ready : MonoBehaviour, IInteractable
 {
+    // Change scene to debug scene
     public void Interact(GameObject vessel = null)
     {
         NetworkManager.Singleton.SceneManager.LoadScene("DebugScene", LoadSceneMode.Single);
     }
 
+    // Subscribe or desubscribe from the players interactable list
     void OnTriggerEnter2D(Collider2D other) {
         if (other.gameObject.tag == "Player") {
             if (!other.gameObject.GetComponent<PlayerController>().interactables.Contains(this.gameObject)) {

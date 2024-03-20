@@ -1,7 +1,7 @@
 using Unity.Netcode.Components;
 using UnityEngine;
 
-// Modificación al NetworkTransform para que reciba datos de cliente
+// Client Authoritative Network Transform
 namespace Unity.Multiplayer.Samples.Utilities.ClientAuthority
 {
     [DisallowMultipleComponent]

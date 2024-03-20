@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Sleek : PlayerController
 {
+    // character stats
     public override int characterSpeed { get{return 5;} }
     public override int characterMaxHealth { get{return 2;} }
     public override int characterFireRate { get{return 3;} }
@@ -16,12 +17,18 @@ public class Sleek : PlayerController
     private Vector2 dashDirection;
 
     public override void CastSpecialAbility() {
+        // If cooldown has ellapsed
         if ((Time.time - timeSinceLastAbility) > (currentAbilityCooldown)) {
             if (isDashing) return;
-            //Encontrar direccion de dash
+            // Encontrar direccion de dash
             Vector2 direction = input_Movement;
             direction.Normalize();
+
+            // return if there is no movement input
             if (direction == Vector2.zero) return;
+
+            // Check where Sleek will go and deny the dash if
+            // it would cause her to get stuck on a wall
             RaycastHit2D[] hits;
             hits = Physics2D.RaycastAll(transform.position, direction, dashDistance);
             foreach (RaycastHit2D hit in hits)
@@ -44,6 +51,7 @@ public class Sleek : PlayerController
         }
     }
 
+    // Dash for an amount of time
     IEnumerator SleekDashTimer(){
         isDashing = true;
         GetComponent<CapsuleCollider2D>().enabled = false;
@@ -52,6 +60,7 @@ public class Sleek : PlayerController
         GetComponent<CapsuleCollider2D>().enabled = true;
     }
 
+    // Lock movement during dash
     public override void FixedUpdate(){
         base.FixedUpdate();
         if (isDashing) {

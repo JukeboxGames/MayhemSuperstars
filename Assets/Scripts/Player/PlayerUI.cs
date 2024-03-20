@@ -20,20 +20,25 @@ public class PlayerUI : MonoBehaviour, IReactToGameState
     [SerializeField] TMP_Text healthText;
     [SerializeField] GameObject virtualCursor;
 
-    void OnEnable(){
+    void OnEnable()
+    {
         so_gameState.gameState.AddListener(ReactToGameState);
     }
 
-    public void SetPlayerEvents(int playerNumber){
-        myPlayerEventSO = playerEvents_SOs[playerNumber-1];
+    // Subscription to player events
+    public void SetPlayerEvents(int playerNumber)
+    {
+        myPlayerEventSO = playerEvents_SOs[playerNumber - 1];
         myPlayerEventSO.event_PlayerHealthChanged.AddListener(OnPlayerHealthChanged);
     }
 
-    void OnPlayerHealthChanged(int health){
+    void OnPlayerHealthChanged(int health)
+    {
         healthText.text = "Health: " + health;
     }
 
-    public void ReactToGameState(GameManager.GameState newState){
+    public void ReactToGameState(GameManager.GameState newState)
+    {
         switch (newState)
         {
             case GameManager.GameState.Lobby:
@@ -62,21 +67,26 @@ public class PlayerUI : MonoBehaviour, IReactToGameState
         }
     }
 
-    void HideElements (GameObject[] array) {
+    // General function to hide UI elements
+    void HideElements(GameObject[] array)
+    {
         foreach (GameObject element in array)
         {
             element.SetActive(false);
         }
     }
 
-    void ShowElements (GameObject[] array) {
+    // General function to show UI elements
+    void ShowElements(GameObject[] array)
+    {
         foreach (GameObject element in array)
         {
             element.SetActive(true);
         }
     }
 
-    public void ReturnToLobby(){
+    public void ReturnToLobby()
+    {
         if (NetworkManager.Singleton.IsServer) so_SceneLoader.NetworkLoadScene("Lobby");
     }
 }

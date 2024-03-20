@@ -6,6 +6,7 @@ public class Terminal_ChangeCharacter : MonoBehaviour, IInteractable
 {
     [SerializeField] private SO_Characters characterSO;
 
+    // Change player character
     public void Interact (GameObject vessel = null){
         PlayerSoul soul = vessel?.GetComponent<PlayerController>().playerSoul;
         if (soul != null) {
@@ -17,6 +18,7 @@ public class Terminal_ChangeCharacter : MonoBehaviour, IInteractable
         }
     }
 
+    // Subscribe or desubscribe from the players interactable list
     void OnTriggerEnter2D(Collider2D other) {
         if (other.gameObject.tag == "Player") {
             if (!other.gameObject.GetComponent<PlayerController>().interactables.Contains(this.gameObject)) {

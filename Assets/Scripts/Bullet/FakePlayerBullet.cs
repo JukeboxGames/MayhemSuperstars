@@ -1,5 +1,8 @@
 using UnityEngine;
 
+// Base class for fake bullets
+// Used exclusively in netcode, does not deal damage
+// It is otherwise the same as player bullet
 public abstract class FakePlayerBullet : MonoBehaviour
 {
     public abstract float playerBulletSpeed { get; }

@@ -2,24 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
-// Legacy
-public class HandleMaxPlayers : MonoBehaviour {
 
-    private void Start() 
+// Legacy
+public class HandleMaxPlayers : MonoBehaviour
+{
+
+    private void Start()
     {
         NetworkManager.Singleton.ConnectionApprovalCallback = DefaultApprovalCheck;
     }
 
-    public void SearchGM(){
+    public void SearchGM()
+    {
         GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>().changedNumberOfPlayers.AddListener(ChangeApprovalCheck);
     }
 
-    private void ChangeApprovalCheck () {
-        if (GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>().numberOfPlayers.Value >= 4) {
+    private void ChangeApprovalCheck()
+    {
+        if (GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>().numberOfPlayers.Value >= 4)
+        {
             NetworkManager.Singleton.ConnectionApprovalCallback = GameFullApprovalCheck;
         }
     }
-
 
 
     private void DefaultApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
@@ -39,7 +43,7 @@ public class HandleMaxPlayers : MonoBehaviour {
                 response.Approved = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>().CheckAvailability();
             }
         }*/
-        
+
 
         response.CreatePlayerObject = true;
 
@@ -51,7 +55,7 @@ public class HandleMaxPlayers : MonoBehaviour {
 
         // Rotation to spawn the player object (if null it uses the default of Quaternion.identity)
         response.Rotation = Quaternion.identity;
-        
+
         // If response.Approved is false, you can provide a message that explains the reason why via ConnectionApprovalResponse.Reason
         // On the client-side, NetworkManager.DisconnectReason will be populated with this message via DisconnectReasonMessage
         response.Reason = "Max number of players has been reached";
@@ -78,7 +82,7 @@ public class HandleMaxPlayers : MonoBehaviour {
                 response.Approved = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>().CheckAvailability();
             }
         }*/
-        
+
 
         response.CreatePlayerObject = false;
 
@@ -90,7 +94,7 @@ public class HandleMaxPlayers : MonoBehaviour {
 
         // Rotation to spawn the player object (if null it uses the default of Quaternion.identity)
         response.Rotation = Quaternion.identity;
-        
+
         // If response.Approved is false, you can provide a message that explains the reason why via ConnectionApprovalResponse.Reason
         // On the client-side, NetworkManager.DisconnectReason will be populated with this message via DisconnectReasonMessage
         response.Reason = "Max number of players has been reached";

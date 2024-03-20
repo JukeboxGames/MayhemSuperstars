@@ -14,7 +14,8 @@ public class PushHitbox : NetworkBehaviour
         base.OnNetworkSpawn();
         StartCoroutine(SelfDestruct());
     }
-
+    
+    // Push pushable objects on trigger enter
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "Player")
@@ -28,6 +29,7 @@ public class PushHitbox : NetworkBehaviour
         }
     }
 
+    // Destroy after sometime
     IEnumerator SelfDestruct () {
         yield return new WaitForSeconds(0.3f);
         if (IsServer) {

@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SocialPlatforms;
 
+// Local communicator: relays the information of the
+// Game Manager to Unity Scriptable objects in every client
 public class LocalCommunicator : MonoBehaviour
 {
     public static LocalCommunicator instance;
@@ -11,21 +13,30 @@ public class LocalCommunicator : MonoBehaviour
     [SerializeField] private SO_GameState so_GameState;
     bool foundGM = false;
 
-    void Awake () {
-        if (instance != null && instance != this) { 
-            Destroy(this.gameObject); 
+    void Awake()
+    {
+        // Singleton behaviour
+        if (instance != null && instance != this)
+        {
+            Destroy(this.gameObject);
         }
-        else { 
-            instance = this; 
+        else
+        {
+            instance = this;
         }
 
         StartCoroutine(SearchForGameManager());
     }
 
-    IEnumerator SearchForGameManager () {
-        while (!foundGM) {
+    // Repeat coroutine until GameManager is found
+    // Could be better
+    IEnumerator SearchForGameManager()
+    {
+        while (!foundGM)
+        {
             yield return new WaitForSeconds(0.1f);
-            if (GameObject.FindGameObjectWithTag("GameManager") != null) {
+            if (GameObject.FindGameObjectWithTag("GameManager") != null)
+            {
                 gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
                 gm.ChangeState.AddListener(CommunicateGameState);
                 foundGM = true;
@@ -33,7 +44,9 @@ public class LocalCommunicator : MonoBehaviour
         }
     }
 
-    void CommunicateGameState(GameManager.GameState newState){
+    // Calls Scriptable Object event to update game state
+    void CommunicateGameState(GameManager.GameState newState)
+    {
         so_GameState.TriggerGameStateEvent(newState);
     }
 }
