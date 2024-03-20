@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class EvilGoat : PlayerController
 {
+    // Character stats
     public override int characterSpeed { get{return 2;} }
     public override int characterMaxHealth { get{return 6;} }
     public override int characterFireRate { get{return 2;} }
@@ -22,8 +23,11 @@ public class EvilGoat : PlayerController
     private float distanceFromPlayer = 0;
     private int tempSpeed;
 
+    // TODO: Netcode
     public override void CastSpecialAbility() {
+        // If there is no casting active, spawn new bonfires
         if (!wasCasting) {
+            // If cooldown has ellapsed
             if ((Time.time - timeSinceLastAbility) > (currentAbilityCooldown)) {
                 tempSpeed = currentSpeed;
                 currentSpeed = 0;
@@ -31,6 +35,7 @@ public class EvilGoat : PlayerController
                 Vector3 placement;
                 float angle;
                 distanceFromPlayer = 0;
+                // Spawn 5 bonfires around Evil Goat
                 for (int i = 0; i < numberOfBonfires; i++) {
                     angle = 360/numberOfBonfires * i;
                     bonfireAngles.Add(angle);
@@ -40,15 +45,19 @@ public class EvilGoat : PlayerController
                     instance.GetComponent<EvilGoat_Bonfire>().damage = currentDamage;
                 }
             }
+        // If there is a casting active
         } else {
+            // Move the fire away from Evil Goat
             distanceFromPlayer += outwardSpeed * Time.deltaTime;
             for (int i = 0; i < numberOfBonfires; i++){
+                // Rotate bonfires around Evil Goat
                 bonfireAngles[i] += turnSpeed * Time.deltaTime;
                 bonfires[i].transform.position += Quaternion.Euler( 0, 0, bonfireAngles[i]) * Vector3.right * distanceFromPlayer;
             }
         }
     }
 
+    // End casting: turn bonfires on, stop moving them
     private void EndCasting(){
         currentSpeed = tempSpeed;
         foreach (GameObject bonfire in bonfires)
@@ -59,13 +68,15 @@ public class EvilGoat : PlayerController
         bonfires.Clear();
         bonfireAngles.Clear();
         wasCasting = false;
-        // Actualizar tiempo de cooldown
+        // Update cooldown time
         timeSinceLastAbility = Time.time;
     }
 
     public override void FixedUpdate()
     {
         base.FixedUpdate();
+        // If the Special Ability button is released, and there was a
+        // casting ongoing, end casting
         if (!input_Special && wasCasting) {
             EndCasting();
         }

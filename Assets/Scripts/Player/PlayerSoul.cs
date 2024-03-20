@@ -32,6 +32,7 @@ public class PlayerSoul : NetworkBehaviour
         }
     }
 
+    // Try to find the game manager
     IEnumerator WaitToJoin () {
         while (!joined) {
             yield return new WaitForSeconds(0.1f);
@@ -59,6 +60,7 @@ public class PlayerSoul : NetworkBehaviour
         }
     }
 
+    // I don't remember why, but it's best to wait to the end of frame to change characters
     private IEnumerator WaitToChangeCharacter (int i) {
         while (!joined){
             yield return new WaitForEndOfFrame();
@@ -67,6 +69,7 @@ public class PlayerSoul : NetworkBehaviour
         ChangeCharacter(i);
     }
 
+    // Swap current vessel for a new one. Destroys the previous one
     public void ChangeCharacter (int index) {
         if (IsOwner) {
             if (vessel != null) {
@@ -79,6 +82,7 @@ public class PlayerSoul : NetworkBehaviour
         }
     }
 
+    // Asks the game manager for availability
     [ServerRpc(RequireOwnership = false)]
     void JoinPlayerServerRpc (NetworkObjectReference soul) {
         GameManager gm = GameObject.FindGameObjectWithTag("GameManager")?.GetComponent<GameManager>();
@@ -87,9 +91,9 @@ public class PlayerSoul : NetworkBehaviour
         if (soul.TryGet(out NetworkObject obj)){
             ConfirmPlayerNumberClientRpc(obj, pNum);
         }
-        
     }
 
+    // Gets player number to this soul
     [ClientRpc]
     void ConfirmPlayerNumberClientRpc(NetworkObjectReference soul, int pNum){
         if (soul.TryGet(out NetworkObject obj)){
@@ -99,6 +103,7 @@ public class PlayerSoul : NetworkBehaviour
         
     }
 
+    // Calls server to spawn vessel
     [ServerRpc(RequireOwnership = false)]
     void SpawnVesselServerRpc (NetworkObjectReference soul, ulong clientId, int index, float x, float y) {
         GameObject clientVessel = Instantiate(characterSO.characterPrefabs[index], currentPosition, Quaternion.identity);
@@ -111,6 +116,7 @@ public class PlayerSoul : NetworkBehaviour
         }
     }
 
+    // Calls server to spawn vessel and destroys the previous one
     [ServerRpc(RequireOwnership = false)]
     void SpawnVesselServerRpc (NetworkObjectReference soul, ulong clientId, int index, NetworkObjectReference vess, float x, float y) {
         GameObject clientVessel = Instantiate(characterSO.characterPrefabs[index], currentPosition, Quaternion.identity);
@@ -128,6 +134,7 @@ public class PlayerSoul : NetworkBehaviour
         }
     }
 
+    // Lets the client soul take control of the vessel
     [ClientRpc]
     void GetControlClientRpc (NetworkObjectReference vess, ulong clientId) {
         // TODO: Check whose local player this is

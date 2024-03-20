@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// Class for Shrimpoleon's waterpools
+// Legacy
 public class Shrimpoleon_waterPool : MonoBehaviour
 {
     void Start () {

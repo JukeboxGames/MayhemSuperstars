@@ -6,12 +6,11 @@ using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.InputSystem.Users;
 using UnityEngine;
 using Unity.Netcode;
-using Unity.VisualScripting;
 using UnityEngine.SceneManagement;
 
+// Class that checks for controller input to join players
 public class LocalSoulSpawner : NetworkBehaviour
 {
-
     public static LocalSoulSpawner Instance
     {
         get;
@@ -20,8 +19,9 @@ public class LocalSoulSpawner : NetworkBehaviour
 
     [SerializeField] GameObject soulPrefab;
 
-    void Awake () {
-
+    void Awake()
+    {
+        // Singleton behaviour
         if (Instance != null && Instance != this)
         {
             Destroy(this);
@@ -39,38 +39,42 @@ public class LocalSoulSpawner : NetworkBehaviour
         InputUser.onUnpairedDeviceUsed += usedControl;
     }
 
-    void usedControl(InputControl inputControl, InputEventPtr eventptr) {
+    void usedControl(InputControl inputControl, InputEventPtr eventptr)
+    {
         // Only react to button presses on unpaired devices.
-        if (!(inputControl is ButtonControl)) {
+        if (!(inputControl is ButtonControl))
+        {
             return;
         }
 
-        if (SceneManager.GetActiveScene().name != "Lobby") {
+        // Only join player if the game is in the lobby
+        if (SceneManager.GetActiveScene().name != "Lobby")
+        {
             return;
         }
 
-        if (GameObject.FindGameObjectWithTag("GameManager") == null) {
+        if (GameObject.FindGameObjectWithTag("GameManager") == null)
+        {
             return;
         }
 
         GameObject gm = GameObject.FindGameObjectWithTag("GameManager");
 
-        
-        
-        if (!gm.GetComponent<GameManager>().CheckAvailability()) {
+        // Do not join player if there is no player slots
+        if (!gm.GetComponent<GameManager>().CheckAvailability())
+        {
             return;
         }
 
         SpawnSoulServerRpc();
     }
 
+    // Spawn Player Soul
     [ServerRpc(RequireOwnership = false)]
-    void SpawnSoulServerRpc (ServerRpcParams serverRpcParams = default) {
-        
+    void SpawnSoulServerRpc(ServerRpcParams serverRpcParams = default)
+    {
         ulong clientId = serverRpcParams.Receive.SenderClientId;
         GameObject soul = Instantiate(soulPrefab);
         soul.GetComponent<NetworkObject>().SpawnWithOwnership(clientId);
-        
-        
     }
 }

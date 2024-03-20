@@ -10,6 +10,7 @@ using Unity.Netcode;
 using Unity.Services.Core;
 using Unity.Services.Authentication;
 
+// Authenticates client information on Game Start
 public class Authenticator : MonoBehaviour
 {
     private async void Start() {
