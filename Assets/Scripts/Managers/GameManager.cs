@@ -133,6 +133,7 @@ public class GameManager : NetworkBehaviour
                         UpdateGameState(GameState.Countdown);
                         break;
                     default:
+                        Debug.Log("Hola");
                         throw new System.ArgumentOutOfRangeException(nameof(state), state, null);
                 }
             }

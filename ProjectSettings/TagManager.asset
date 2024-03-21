@@ -10,6 +10,7 @@ TagManager:
   - Enemy
   - LocalSoulSpawner
   - GameManager
+  - NavMesh
   layers:
   - Default
   - TransparentFX
@@ -17,7 +18,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - NavMesh
   - 
   - 
   - 

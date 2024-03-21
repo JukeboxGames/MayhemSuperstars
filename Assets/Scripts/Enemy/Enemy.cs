@@ -5,17 +5,16 @@ using UnityEngine;
 using System;
 
 
-public abstract class Prop : NetworkBehaviour, IReactToGameState
+public abstract class Enemy : NetworkBehaviour, IReactToGameState, IDamageable
 {
     // protected bool enabled = false;
-    [SerializeField] private SO_GameState sO_GameState;
+    public int health;
+    public int moveSpeed; 
+    public int atkSpeed;
+    public int atkDmg; 
 
-    public void MostrarHitbox()
-    {
-        // TODO: show player hitbox
-        Debug.Log("CROSS THE ROAD");
-    }
-    void Start() {
+    [SerializeField] private SO_GameState sO_GameState;
+    protected virtual void Start() {
         sO_GameState.gameState.AddListener(ReactToGameState);
     }
     public virtual void ReactToGameState(GameManager.GameState newState)
@@ -72,5 +71,7 @@ public abstract class Prop : NetworkBehaviour, IReactToGameState
     public abstract void OnLeaderboard();
     public abstract void OnPurchasePhase();
     public abstract void OnEndgame();
-    public abstract void OnWinScreen();      
+    public abstract void OnWinScreen();   
+    public abstract void GetHit(int dmg); 
+    public abstract void Die();    
 }
