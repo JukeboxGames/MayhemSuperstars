@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 using System;
+using UnityEngine.AI;
 
 
 public abstract class Enemy : NetworkBehaviour, IReactToGameState, IDamageable
@@ -14,9 +15,12 @@ public abstract class Enemy : NetworkBehaviour, IReactToGameState, IDamageable
     public int atkDmg; 
 
     [SerializeField] private SO_GameState sO_GameState;
+    protected NavMeshAgent agent; 
+
     protected virtual void Start() {
         sO_GameState.gameState.AddListener(ReactToGameState);
     }
+    
     public virtual void ReactToGameState(GameManager.GameState newState)
     {
         switch (newState)

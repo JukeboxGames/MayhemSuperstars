@@ -8,7 +8,8 @@ using UnityEngine.AI;
 public class Zombie : Enemy
 {
   // protected bool enabled = false;
-  NavMeshAgent agent;
+
+  private GameObject[] playerList; 
 
   protected override void Start()
   {
@@ -18,7 +19,14 @@ public class Zombie : Enemy
     atkSpeed = 1;
     atkDmg = 1;
     agent = gameObject.GetComponent<NavMeshAgent>(); 
-    agent.destination = GameManager.instance.playerSoulArray[0].GetComponent<PlayerSoul>().vessel.transform.position; 
+    agent.updateRotation = false; 
+    agent.updateUpAxis = false; 
+    playerList = GameManager.instance.playerSoulArray;
+    //agent.destination = GameManager.instance.playerSoulArray[0].GetComponent<PlayerSoul>().vessel.transform.position; 
+  }
+
+  private void Update() {
+    agent.SetDestination(playerList[0].GetComponent<PlayerSoul>().vessel.transform.position);
   }
 
   public override void OnLobby()
