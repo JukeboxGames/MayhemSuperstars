@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class BlackCharro : PlayerController
 {
+    // Character stats
     public override int characterSpeed { get{return 4;} }
     public override int characterMaxHealth { get{return 4;} }
     public override int characterFireRate { get{return 2;} }
@@ -14,8 +15,12 @@ public class BlackCharro : PlayerController
     [SerializeField] private float slashDistanceFromPlayer;
     [SerializeField] private float slashDuration;
 
+
+    // TODO: Netcode
     public override void CastSpecialAbility() {
+        // if cooldown has ellapsed, use special ability
         if ((Time.time - timeSinceLastAbility) > (currentAbilityCooldown)) {
+            // The player must have a direction input to use the ability
             Vector2 direction = GetSlashDirection();
             if (direction == Vector2.zero) return;
 
@@ -29,12 +34,12 @@ public class BlackCharro : PlayerController
             instance.transform.eulerAngles = Vector3.forward * angle;
 
             StartCoroutine(RecordSlashTime(instance));
-
             // Actualizar tiempo de cooldown
             timeSinceLastAbility = Time.time;
         }
     }
 
+    // Destroy Slash after some time
     IEnumerator RecordSlashTime (GameObject instance) {
         yield return new WaitForSeconds(slashDuration);
         Destroy(instance);

@@ -10,20 +10,24 @@ public class ThreeDotText : MonoBehaviour
     [SerializeField] private float intervalTime;
     int numberOfDots = 0;
 
-    private void OnEnable() {
+    private void OnEnable()
+    {
         threeDotText = GetComponent<TMP_Text>();
         numberOfDots = 0;
         StartCoroutine(StartStringDots());
     }
 
-    private void OnDisable() {
+    private void OnDisable()
+    {
         StopAllCoroutines();
     }
 
-    IEnumerator StartStringDots () {
+    IEnumerator StartStringDots()
+    {
         string displayString;
         displayString = baseString;
-        for (int i = 0; i < numberOfDots; i++) {
+        for (int i = 0; i < numberOfDots; i++)
+        {
             displayString += ".";
         }
         threeDotText.text = displayString;

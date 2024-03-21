@@ -29,12 +29,18 @@ public class VirtualCursor : MonoBehaviour
     Vector2 newPosition;
     public bool stopRecordingInput = false;
 
-    private void OnEnable() {
-        if (!(playerInput.currentControlScheme == "Keyboard")) {
-            if (virtualMouse == null) { 
-                virtualMouse = (Mouse) InputSystem.AddDevice("VirtualMouse");
+    private void OnEnable()
+    {
+        // No crear mouse virtual si se usa uno real
+        if (!(playerInput.currentControlScheme == "Keyboard"))
+        {
+            // Crear mouses virtuales
+            if (virtualMouse == null)
+            {
+                virtualMouse = (Mouse)InputSystem.AddDevice("VirtualMouse");
             }
-            else if (!virtualMouse.added){
+            else if (!virtualMouse.added)
+            {
                 InputSystem.AddDevice(virtualMouse);
             }
 
@@ -42,7 +48,8 @@ public class VirtualCursor : MonoBehaviour
 
             cursorTransform.gameObject.SetActive(true);
 
-            if (cursorTransform != null) {
+            if (cursorTransform != null)
+            {
                 Vector2 position = cursorTransform.anchoredPosition;
                 InputState.Change(virtualMouse.position, position);
             }
@@ -52,21 +59,27 @@ public class VirtualCursor : MonoBehaviour
             InitializeInput();
 
             AnchorCursor(Vector2.zero);
-        } else {
+        }
+        else
+        {
             cursorTransform.gameObject.SetActive(false);
         }
     }
 
-    private void OnDisable() {
-        if (virtualMouse != null) {
+    private void OnDisable()
+    {
+        if (virtualMouse != null)
+        {
             InputSystem.RemoveDevice(virtualMouse);
             InputSystem.onAfterUpdate -= UpdateMotion;
             StopInput();
         }
     }
 
-    private void UpdateMotion() {
-        if (virtualMouse == null || stopRecordingInput){
+    private void UpdateMotion()
+    {
+        if (virtualMouse == null || stopRecordingInput)
+        {
             return;
         }
 
@@ -84,57 +97,68 @@ public class VirtualCursor : MonoBehaviour
         AnchorCursor(newPosition);
     }
 
-    private void LimitBorder () {
+    private void LimitBorder()
+    {
         newPosition.x = Mathf.Clamp(newPosition.x, myCamera.pixelWidth + padding, myCamera.pixelWidth * 2f - padding);
         newPosition.y = Mathf.Clamp(newPosition.y, 0 + padding, myCamera.pixelHeight - padding);
     }
 
-    private void AnchorCursor(Vector2 position){
+    private void AnchorCursor(Vector2 position)
+    {
         Vector2 anchoredPosition;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRectTransform, position, canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : myCamera, out anchoredPosition);
         cursorTransform.anchoredPosition = anchoredPosition;
     }
 
     #region Input Functions
-        // Aun no pienso si vamos a gestionar aqui el input para el modo editor
-        void InitializeInput(){
-            playerInput.actions["Movement"].performed += OnPoint;
-            playerInput.actions["Rotate Left"].performed += OnRotateLeft;
-            playerInput.actions["Rotate Right"].performed += OnRotateRight;
-            playerInput.actions["Place"].performed += OnPoint;
+    // Aun no pienso si vamos a gestionar aqui el input para el modo editor
+    void InitializeInput()
+    {
+        playerInput.actions["Movement"].performed += OnPoint;
+        playerInput.actions["Rotate Left"].performed += OnRotateLeft;
+        playerInput.actions["Rotate Right"].performed += OnRotateRight;
+        playerInput.actions["Place"].performed += OnPoint;
 
-            playerInput.actions["Rotate Left"].canceled += OnRotateLeft;
-            playerInput.actions["Rotate Right"].canceled += OnRotateRight;
-            playerInput.actions["Place"].canceled += OnPoint;
-        }
+        playerInput.actions["Rotate Left"].canceled += OnRotateLeft;
+        playerInput.actions["Rotate Right"].canceled += OnRotateRight;
+        playerInput.actions["Place"].canceled += OnPoint;
+    }
 
-        void StopInput () {
-            playerInput.actions["Movement"].performed -= OnPoint;
-            playerInput.actions["Rotate Left"].performed -= OnRotateLeft;
-            playerInput.actions["Rotate Right"].performed -= OnRotateRight;
-            playerInput.actions["Place"].performed -= OnPoint;
+    void StopInput()
+    {
+        playerInput.actions["Movement"].performed -= OnPoint;
+        playerInput.actions["Rotate Left"].performed -= OnRotateLeft;
+        playerInput.actions["Rotate Right"].performed -= OnRotateRight;
+        playerInput.actions["Place"].performed -= OnPoint;
 
-            playerInput.actions["Rotate Left"].canceled -= OnRotateLeft;
-            playerInput.actions["Rotate Right"].canceled -= OnRotateRight;
-            playerInput.actions["Place"].canceled -= OnPoint;
-        }   
+        playerInput.actions["Rotate Left"].canceled -= OnRotateLeft;
+        playerInput.actions["Rotate Right"].canceled -= OnRotateRight;
+        playerInput.actions["Place"].canceled -= OnPoint;
+    }
 
+    /*
+        Input functions for edit mode
+        idk if this goes here
+    */
+    public void OnPoint(InputAction.CallbackContext context)
+    {
+        input_Movement = context.ReadValue<Vector2>();
+    }
 
-        public void OnPoint(InputAction.CallbackContext context){
-            input_Movement = context.ReadValue<Vector2>();
-        }
+    public void OnRotateLeft(InputAction.CallbackContext context)
+    {
+        input_rotateLeft = context.ReadValue<bool>();
+    }
 
-        public void OnRotateLeft(InputAction.CallbackContext context){
-            input_rotateLeft = context.ReadValue<bool>();
-        }
+    public void OnRotateRight(InputAction.CallbackContext context)
+    {
+        input_rotateRight = context.ReadValue<bool>();
+    }
 
-        public void OnRotateRight(InputAction.CallbackContext context){
-            input_rotateRight = context.ReadValue<bool>();
-        }
-
-        public void OnPlace(InputAction.CallbackContext context){
-            input_place = context.ReadValue<bool>();
-        }
+    public void OnPlace(InputAction.CallbackContext context)
+    {
+        input_place = context.ReadValue<bool>();
+    }
 
 
     #endregion

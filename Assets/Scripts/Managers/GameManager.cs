@@ -6,31 +6,38 @@ using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using System;
 
+// Game Manager class
+// Manages the state of the game and player points
 public class GameManager : NetworkBehaviour
 {
     public static GameManager instance;
-    
+
     public NetworkVariable<float> timer = new NetworkVariable<float>(default, NetworkVariableReadPermission.Everyone);
     private GameState state;
     public UnityEvent changedNumberOfPlayers;
     public UnityEvent<GameState> ChangeState;
     [SerializeField] private SO_Maps mapsSO;
     private bool recordTime = false;
-
     public GameObject[] playerSoulArray = new GameObject[4];
     private int[] playerPoints = new int[4];
     public NetworkVariable<int> numberOfPlayers = new NetworkVariable<int>(default, NetworkVariableReadPermission.Everyone);
 
-    void Awake () {
-        if (!NetworkManager.Singleton.IsServer) {
+
+    void Awake()
+    {
+        // Singleton behaviour
+        if (!NetworkManager.Singleton.IsServer)
+        {
             return;
         }
 
-        if (instance != null && instance != this) { 
-            Destroy(this.gameObject); 
+        if (instance != null && instance != this)
+        {
+            Destroy(this.gameObject);
         }
-        else { 
-            instance = this; 
+        else
+        {
+            instance = this;
         }
 
         this?.GetComponent<NetworkObject>().Spawn(destroyWithScene: false);
@@ -38,43 +45,59 @@ public class GameManager : NetworkBehaviour
         NetworkManager.SceneManager.OnSceneEvent += OnNetworkSceneLoaded;
     }
 
-    public int JoinPlayer (GameObject soul) {
+    // Join player to session. Returns its player number
+    public int JoinPlayer(GameObject soul)
+    {
         playerSoulArray[numberOfPlayers.Value] = soul;
         numberOfPlayers.Value++;
         changedNumberOfPlayers?.Invoke();
         return numberOfPlayers.Value;
     }
 
-    public bool CheckAvailability () {
-        if (numberOfPlayers.Value >= 4) {
+    // Checks if there are available spots to join
+    public bool CheckAvailability()
+    {
+        if (numberOfPlayers.Value >= 4)
+        {
             return false;
-        } else {
+        }
+        else
+        {
             return true;
         }
     }
 
-    // Ejecutar funciones de escena de juego
+    // Updates Game State depending on the loaded scene
     void OnNetworkSceneLoaded(SceneEvent sceneEvent)
     {
-        if (sceneEvent.SceneEventType == SceneEventType.LoadEventCompleted){
-            if (SceneManager.GetActiveScene().name == "Lobby") {
+        if (sceneEvent.SceneEventType == SceneEventType.LoadEventCompleted)
+        {
+            if (SceneManager.GetActiveScene().name == "Lobby")
+            {
                 UpdateGameState(GameState.Lobby);
             }
 
-            if (Array.Exists(mapsSO.mapNames, element => element == SceneManager.GetActiveScene().name)) {
+            // mapsSO contains all the names of the maps
+            // When a map is loaded, reset points and go to countdown
+            if (Array.Exists(mapsSO.mapNames, element => element == SceneManager.GetActiveScene().name))
+            {
                 playerPoints = new int[4];
                 UpdateGameState(GameState.Countdown);
             }
         }
     }
 
-    void UpdateGameState (GameState newState) {
-        if (IsServer) {
+    // Update GameState variable and changes the timer
+    void UpdateGameState(GameState newState)
+    {
+        if (IsServer)
+        {
             state = newState;
             InvokeGameStateChangeClientRpc(newState);
             //ChangeState.Invoke(newState);
 
-            switch(newState){
+            switch (newState)
+            {
                 case GameState.Lobby:
                     recordTime = false;
                     break;
@@ -107,11 +130,16 @@ public class GameManager : NetworkBehaviour
         }
     }
 
-    void Update () {
-        if (IsServer && recordTime) {
+    // Handle the timer on update
+    void Update()
+    {
+        if (IsServer && recordTime)
+        {
             timer.Value -= Time.deltaTime;
-            if (timer.Value < 0f) {
-                switch(state){
+            if (timer.Value < 0f)
+            {
+                switch (state)
+                {
                     case GameState.Countdown:
                         UpdateGameState(GameState.Round);
                         break;
@@ -119,13 +147,16 @@ public class GameManager : NetworkBehaviour
                         UpdateGameState(GameState.TimesUp);
                         break;
                     case GameState.TimesUp:
-                        GivePoints ();
+                        GivePoints();
                         UpdateGameState(GameState.Leaderboard);
                         break;
                     case GameState.Leaderboard:
-                        if (CheckForWinner()) {
+                        if (CheckForWinner())
+                        {
                             UpdateGameState(GameState.Endgame);
-                        } else {
+                        }
+                        else
+                        {
                             UpdateGameState(GameState.PurchasePhase);
                         }
                         break;
@@ -136,37 +167,49 @@ public class GameManager : NetworkBehaviour
                         throw new System.ArgumentOutOfRangeException(nameof(state), state, null);
                 }
             }
-        }   
+        }
     }
 
-    void GivePoints () {
+    // Gives points to all alive player objects
+    void GivePoints()
+    {
         GameObject soul;
-        for(int i = 0; i < numberOfPlayers.Value; i++) {
+        for (int i = 0; i < numberOfPlayers.Value; i++)
+        {
             soul = playerSoulArray[i];
-            if (!soul.GetComponent<PlayerSoul>().vessel.GetComponent<PlayerController>().isDead) {
+            if (!soul.GetComponent<PlayerSoul>().vessel.GetComponent<PlayerController>().isDead)
+            {
                 playerPoints[i]++;
             }
         }
     }
 
-    bool CheckForWinner () {
+    // Checks if any player has reached 5 points
+    bool CheckForWinner()
+    {
         foreach (int points in playerPoints)
         {
-            if (points >= 5) {
+            if (points >= 5)
+            {
                 return true;
             }
         }
+
+        // Hardcoded to return TRUE for debugging purposes
         //return false;
         return true;
     }
 
+    // Change the state in every client
     [ClientRpc]
-    void InvokeGameStateChangeClientRpc (GameState newState) {
+    void InvokeGameStateChangeClientRpc(GameState newState)
+    {
         ChangeState.Invoke(newState);
     }
 
-    // Estados de juego
-    public enum GameState{
+    // GameStates
+    public enum GameState
+    {
         Lobby,
         Countdown,
         Round,

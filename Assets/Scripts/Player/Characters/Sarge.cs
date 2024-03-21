@@ -3,6 +3,7 @@ using System.Collections;
 
 public class Sarge : PlayerController
 {
+    // Character stats
     public override int characterSpeed { get{return 1;} }
     public override int characterMaxHealth { get{return 10;} }
     public override int characterFireRate { get{return 2;} }
@@ -13,7 +14,9 @@ public class Sarge : PlayerController
     [SerializeField] private float shieldDistanceFromPlayer;
     [SerializeField] private float shieldDuration;
 
+    // TODO: Netcode
     public override void CastSpecialAbility() {
+        // Ig cooldown has elapsed
         if ((Time.time - timeSinceLastAbility) > (currentAbilityCooldown)) {
             Vector2 direction = GetShieldDirection();
             if (direction == Vector2.zero) return;
@@ -33,6 +36,7 @@ public class Sarge : PlayerController
         }
     }
 
+    // Destroy shield after a certain time
     IEnumerator RecordShieldTime (GameObject instance) {
         currentSpeed--;
         yield return new WaitForSeconds(shieldDuration);
@@ -41,7 +45,7 @@ public class Sarge : PlayerController
     }
 
     Vector2 GetShieldDirection () {
-        // Get Direction
+        // Get shooting direction
         Vector2 direction;
         if (playerInput.currentControlScheme == "Keyboard") {
             Vector3 worldMousePos = Camera.main.ScreenToWorldPoint(input_ShootDirection);
