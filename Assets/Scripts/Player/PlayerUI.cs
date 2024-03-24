@@ -13,12 +13,16 @@ public class PlayerUI : MonoBehaviour, IReactToGameState
     [SerializeField] SO_PlayerEvents[] playerEvents_SOs;
     private SO_PlayerEvents myPlayerEventSO;
     [SerializeField] SceneLoader so_SceneLoader;
+    [SerializeField] SO_Props so_Props; 
 
     [Header("Elements")]
     [SerializeField] GameObject[] winScreenElements;
     [SerializeField] GameObject blackPanel;
     [SerializeField] TMP_Text healthText;
     [SerializeField] GameObject virtualCursor;
+
+    private GameObject ghostObject; 
+
 
     void OnEnable()
     {
@@ -53,6 +57,7 @@ public class PlayerUI : MonoBehaviour, IReactToGameState
                 break;
             case GameManager.GameState.PurchasePhase:
                 virtualCursor.SetActive(true);
+                //sigue el objeto
                 break;
             case GameManager.GameState.Endgame:
                 virtualCursor.SetActive(false);
@@ -88,5 +93,27 @@ public class PlayerUI : MonoBehaviour, IReactToGameState
     public void ReturnToLobby()
     {
         if (NetworkManager.Singleton.IsServer) so_SceneLoader.NetworkLoadScene("Lobby");
+    }
+    //call on the press of a button 
+    public void SpawnObject(int propId){
+        //Instantiate Scriptable.[i].GhostProp at pos = virtualCurosr.mouse.position
+        //TO-DO SPAWN IN NETWORK
+        ghostObject = so_Props.props[propId].ghostProp;
+        if(virtualCursor != null){
+            Instantiate(ghostObject, virtualCursor.GetComponent<VirtualCursor>().worldPositionVirtualMouse, Quaternion.identity);
+        } else {
+            // TO-DO Mouse normal
+        }
+        
+
+    }
+    public void MoveObject(){ // call on Update
+        if(ghostObject != null){
+            if(virtualCursor != null){
+                ghostObject.transform.position = virtualCursor.GetComponent<VirtualCursor>().worldPositionVirtualMouse;
+            } else { //TO-DO Mouse Normal
+
+            }
+        }
     }
 }

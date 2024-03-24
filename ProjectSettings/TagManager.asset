@@ -10,6 +10,8 @@ TagManager:
   - Enemy
   - LocalSoulSpawner
   - GameManager
+  - GhostBox
+  - Prop
   layers:
   - Default
   - TransparentFX
@@ -19,8 +21,8 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
+  - Wall
+  - Enemy
   - 
   - 
   - 

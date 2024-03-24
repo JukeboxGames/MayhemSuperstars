@@ -12,4 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4426d9e034eccc4fb660d9abff3c9c8, type: 3}
   m_Name: Props
   m_EditorClassIdentifier: 
-  props: []
+  props:
+  - placedProp: {fileID: 0}
+    ghostProp: {fileID: 0}
+  - placedProp: {fileID: 0}
+    ghostProp: {fileID: 0}

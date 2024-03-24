@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.InputSystem.Users;
 using UnityEngine.InputSystem.UI;
+using Unity.Collections.LowLevel.Unsafe;
 
 // El cursor virtual solo se usará en el modo editor
 // El resto de menus debe ser navegable
@@ -18,6 +19,8 @@ public class VirtualCursor : MonoBehaviour
     [SerializeField] private Camera myCamera;
     [SerializeField] private float padding = 60f;
     #endregion
+
+    public Vector3 worldPositionVirtualMouse;
 
     #region Input Functions
     Vector2 input_Movement;
@@ -93,6 +96,7 @@ public class VirtualCursor : MonoBehaviour
 
         InputState.Change(virtualMouse.position, newPosition);
         InputState.Change(virtualMouse.delta, deltaValue);
+        worldPositionVirtualMouse = myCamera.ScreenToWorldPoint(virtualMouse.position.ReadValue());
 
         AnchorCursor(newPosition);
     }
